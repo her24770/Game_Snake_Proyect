@@ -25,65 +25,49 @@ Ciclo 2, 2025
 
 ## Estructura del Proyecto
 
+```text
 snake_game/
 │
-├── docs/                       # Documentación
+├── docs/                           # Documentación del proyecto
 │   ├── Fase1_Planificacion.pdf
 │   ├── Fase2_EntornoGrafico.pdf
 │   └── Fase3_Final.pdf
 │
-├── include/                    # Headers
-│   ├── core/
-│   │   ├── GameConstants.hpp   # Constantes (ANCHO, ALTO, SÍMBOLOS ASCII)
-│   │   ├── GameState.hpp       # Structs: Snake, Food, GameState
-│   │   └── ThreadSharedData.hpp # Datos compartidos + mutex/cond vars
+├── include/                        # Headers
+│   ├── core/                       # Lógica principal del juego
+│   │   ├── GameConstants.hpp       # Constantes y configuraciones
+│   │   ├── GameState.hpp           # Estructuras de datos del juego
+│   │   └── ThreadSharedData.hpp    # Datos compartidos entre hilos
 │   │
-│   ├── rendering/              # VISUALIZACIÓN
-│   │   ├── ASCIIArt.hpp        # Menús, instrucciones, puntajes (ASCII)
-│   │   └── RenderEngine.hpp    # Dibujar tablero, serpiente, comida
+│   ├── rendering/                  # Sistema de visualización
+│   │   ├── ASCIIArt.hpp            # Menús y pantallas ASCII
+│   │   └── RenderEngine.hpp        # Renderizado del juego
 │   │
-│   ├── utils/                  # Utilidades
-│   │   ├── WindowsConsole.hpp  # Control de consola Windows (cursor, color)
-│   │   ├── RandomGenerator.hpp # Generar números aleatorios (comida)
-│   │   └── InputHandler.hpp    # Lectura de teclado no bloqueante
+│   ├── utils/                      # Utilidades
+│   │   ├── WindowsConsole.hpp      # Control de consola Windows
+│   │   ├── RandomGenerator.hpp     # Generación de números aleatorios
+│   │   └── InputHandler.hpp        # Manejo de entrada de teclado
 │   │
-│   └── threads/                # HILOS
-│       ├── InputThread.hpp     # Hilo: leer teclado
-│       ├── RenderThread.hpp    # Hilo: dibujar en consola
-│       ├── GameThreads.hpp     # Hilos: movimiento, comida, colisiones
-|       |── Synchronization.hpp # Mutex, condition variables
-│       └── ... (Demas hilos) ...
+│   └── threads/                    # Sistema de concurrencia
+│       ├── InputThread.hpp         # Hilo de entrada de teclado
+│       ├── RenderThread.hpp        # Hilo de renderizado
+│       ├── GameThreads.hpp         # Hilos de lógica del juego
+│       └── Synchronization.hpp     # Utilidades de sincronización
 │
-├── src/                        # Código fuente
-│   ├── core/
-│   │   ├── GameState.cpp
-│   │   └── ThreadSharedData.cpp
-│   │
-│   ├── rendering/              # IMPLEMENTACIÓN VISUAL 
-│   │   ├── ASCIIArt.cpp        # Implementación menús ASCII
-│   │   └── RenderEngine.cpp    # Implementación dibujo juego
-│   │
-│   ├── utils/
-│   │   ├── WindowsConsole.cpp  # Implementación funciones consola
-│   │   ├── RandomGenerator.cpp
-│   │   └── InputHandler.cpp
-│   │
-│   ├── threads/                #  IMPLEMENTACIÓN HILOS 
-│   │   ├── InputThread.cpp
-│   │   ├── RenderThread.cpp
-│   │   ├── GameThreads.cpp
-│   │   |── Synchronization.cpp
-|   |   └── ... (demas hilos) ...
-│   │
-│   └── main.cpp                # Punto de entrada principal
+├── src/                            # Implementación
+│   ├── core/                       # Implementación de la lógica
+│   ├── rendering/                  # Implementación visual
+│   ├── utils/                      # Implementación de utilidades
+│   ├── threads/                    # Implementación de hilos
+│   └── main.cpp                    # Punto de entrada principal
 │
-├── assets/                     # Recursos
-│   └── scores.txt              # Archivo para guardar puntuaciones
+├── assets/                         # Recursos
+│   └── scores.txt                  # Almacenamiento de puntuaciones
 │
-├── Makefile                    # Compilación
-└── README.md                   # Guía de uso
-
-
+├── Makefile                        # Compilación para Linux
+├── build.bat                       # Compilación para Windows
+└── README.md                       # Este archivo
+```
 ## Requisitos del Sistema
 - Sistema Operativo: Windows 10/11
 - Compilador: MinGW-w64 o MSVC
