@@ -12,6 +12,10 @@ int main() {
         // Mostrar el menú principal
         ASCIIArt::drawMainMenu();
         
+        WindowsConsole::pauseExecution();
+
+        ASCIIArt::drawPrincipalStagePreview();
+
         // Mensaje informativo para el usuario
         std::cout << WindowsConsole::Colors::BRIGHT_WHITE;
         std::cout << "\n\n";

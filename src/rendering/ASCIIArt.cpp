@@ -191,4 +191,81 @@ namespace ASCIIArt {
         printCenteredLine(text);
         std::cout << WindowsConsole::Colors::RESET;
     }
+
+
+    //Escenario principal del juego
+    void drawPrincipalStagePreview(){
+        int score = 10;
+        std::vector<std::string> pantalla(CONSOLE_HEIGHT, std::string(CONSOLE_WIDTH, ' '));
+        WindowsConsole::clearScreen();
+        WindowsConsole::hideCursor();
+        WindowsConsole::setConsoleTitle("Snake game - Playing");
+        std::cout<<std::endl;
+
+        drawBorder_PS(pantalla);
+        
+        //Cuerpo de la serpiente
+        drawObject(pantalla, 15,20, "*");
+        drawObject(pantalla, 16,20, "*");
+        drawObject(pantalla, 17,20, "*");
+        drawObject(pantalla, 18,20, "*");
+        drawObject(pantalla, 19,20, "*");
+        drawObject(pantalla, 19,21, "*");
+        drawObject(pantalla, 19,22, "*");
+        drawObject(pantalla, 19,22, "@");
+
+        //Cuerpo de la serpiente
+        drawObject(pantalla, 45,20, "@");
+        drawObject(pantalla, 46,20, "%");
+        drawObject(pantalla, 47,20, "%");
+        drawObject(pantalla, 48,20, "%");
+        drawObject(pantalla, 49,20, "%");
+        drawObject(pantalla, 49,21, "%");
+        drawObject(pantalla, 49,22, "%");
+        drawObject(pantalla, 49,22, "%");
+
+        //Comida
+        drawObject(pantalla, 30,23, "O");
+
+        system("cls");
+
+        std::cout << WindowsConsole::Colors::BRIGHT_WHITE;
+        std::string scoreText = "PUNTUACIÓN: " + std::to_string(score);
+        std::cout << centerString(scoreText, CONSOLE_WIDTH) << std::endl;
+        std::cout << WindowsConsole::Colors::RESET;
+
+
+        //Se dibujan todos los elementos de la matriz
+        for (const auto& linea : pantalla) {
+            for (char c : linea) {
+                switch (c) {
+                    case '#': std::cout << WindowsConsole::Colors::BRIGHT_GREEN; break; // Bordes
+                    case '*': std::cout << WindowsConsole::Colors::BRIGHT_CYAN; break;  // Cuerpo
+                    case '@': std::cout << WindowsConsole::Colors::BRIGHT_BLUE; break;  // Cabeza
+                    case '%': std::cout << WindowsConsole::Colors::BRIGHT_YELLOW; break;   // Cuerpo jugador 2
+                    case 'O': std::cout << WindowsConsole::Colors::BRIGHT_RED; break;   // Comida
+                    default: std::cout << WindowsConsole::Colors::RESET; break;
+                }
+                std::cout << c;
+            }
+            std::cout << std::endl;
+        }
+    }
+
+    //Bordes del escenario
+    void drawBorder_PS(std::vector<std::string>& pantalla){
+        std:: cout << WindowsConsole::Colors::BRIGHT_GREEN;
+            for (int x = 0; x < CONSOLE_WIDTH; ++x) {
+            pantalla[0][x] = pantalla[CONSOLE_HEIGHT - 1][x] = '#'; // Bordes superior e inferior
+        }
+        for (int y = 0; y < CONSOLE_HEIGHT; ++y) {
+            pantalla[y][0] = pantalla[y][CONSOLE_WIDTH - 1] = '#'; // Bordes laterales
+        }
+        std::cout << WindowsConsole::Colors::RESET;
+    }
+
+    void drawObject(std::vector<std::string>& pantalla, int x, int y, const std::string& sym){
+        if(x>0&& x<CONSOLE_WIDTH && y>0 && y<CONSOLE_HEIGHT) //Verifica que está en los límites del escenario
+            pantalla[y].replace(x, sym.length(), sym); //Agrega el objeto dentro del espacio de la matríz
+    }
 }
