@@ -1,0 +1,123 @@
+# ==============================================
+# .gitignore para SnakeGame-CPP-Multihilo
+# ==============================================
+
+# 🔧 Archivos de compilación y ejecutables
+*.exe
+*.out
+*.app
+*.o
+*.obj
+*.a
+*.lib
+*.dll
+*.so
+*.dylib
+
+# 📁 Directorios de build
+build/
+bin/
+obj/
+Debug/
+Release/
+x64/
+x86/
+.vs/
+out/
+
+# 🔥 Archivos específicos de IDEs
+# Visual Studio
+*.vcxproj
+*.vcxproj.filters
+*.vcxproj.user
+*.sln
+*.suo
+*.opensdf
+*.sdf
+ipch/
+
+# VS Code
+.vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# CodeBlocks
+*.cbp
+*.depend
+*.layout
+
+# CLion
+cmake-build-*/
+.idea/
+
+# 🔄 Archivos de respaldo y temporales
+*~
+*.bak
+*.tmp
+*.temp
+*.swp
+*.swo
+
+# 📊 Logs y resultados de pruebas
+*.log
+*.tlog
+*.lastbuildstate
+test_results/
+
+# 💾 Archivos de base de datos local (si usas alguno)
+*.db
+*.sqlite
+*.sqlite3
+
+# 📦 Dependencias y paquetes
+dependencies/
+packages/
+*.tar.gz
+*.zip
+
+# 🧪 Archivos de testing (si agregas tests después)
+*.gcno
+*.gcda
+coverage/
+
+# 🎮 Assets generados o temporales
+assets/scores.txt # Si se regenera automáticamente
+
+# 📝 Documentación generada
+docs/html/
+docs/latex/
+docs/.~lock.*
+
+# 🔍 Archivos de usuario específicos del sistema
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# 🐛 Core dumps (Linux)
+core
+*.core
+
+# 🧹 Precompiled headers (si los usas)
+*.gch
+*.pch
+
+# 📊 Profiling data
+*.profdata
+*.profraw
+
+# 🗂️ Archivos de proyecto específicos de Make
+Makefile.in
+autom4te.cache/
+config.status
+config.log
+configure
+
+# ==============================================
+# EXCEPCIONES - Archivos que SÍ deben versionarse
+# ==============================================
+!assets/scores.txt.example # Ejemplo de estructura de scores
+!Makefile
+!build.bat
+!README.md
