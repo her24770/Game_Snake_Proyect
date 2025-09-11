@@ -16,12 +16,15 @@ namespace ASCIIArt {
     void drawMenuBorder();
     void drawMenuOptions();
     void drawFooter();
+    void drawPrincipalStagePreview();
     
     // Funciones auxiliares de diseño
     void drawHorizontalLine(int width, char character = '=');
     void drawVerticalBorder(const std::string& content, int totalWidth);
     std::string centerString(const std::string& text, int width);
     std::string padString(const std::string& text, int width, char padChar = ' ');
+    void drawBorder_PS(std::vector<std::string>& pantalla);
+    void drawObject(std::vector<std::string>& pantalla, int x, int y, const std::string& sym);
     
     // Arte ASCII específico
     void drawSnakeTitle();
