@@ -1,65 +1,35 @@
 #include "../../include/utils/WindowsConsole.hpp"
 #include <iostream>
 #include <iomanip>
-
-#ifdef _WIN32
-    #include <windows.h>
-    #include <conio.h>
-#else
-    #include <unistd.h>
-    #include <termios.h>
-    #include <sys/ioctl.h>
-#endif
+#include <unistd.h>
+#include <termios.h>
+#include <sys/ioctl.h>
 
 namespace WindowsConsole {
     
     void clearScreen() {
-        #ifdef _WIN32
-            system("cls");
-        #else
-            system("clear");
-        #endif
+
+        system("clear");
     }
     
     void setCursorPosition(int x, int y) {
-        #ifdef _WIN32
-            COORD coord;
-            coord.X = x;
-            coord.Y = y;
-            SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
-        #else
-            std::cout << "\033[" << (y + 1) << ";" << (x + 1) << "H";
-        #endif
+
+        std::cout << "\033[" << (y + 1) << ";" << (x + 1) << "H";
+        
     }
     
     void hideCursor() {
-        #ifdef _WIN32
-            CONSOLE_CURSOR_INFO cursorInfo;
-            GetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE), &cursorInfo);
-            cursorInfo.bVisible = false;
-            SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE), &cursorInfo);
-        #else
-            std::cout << "\033[?25l";
-        #endif
+      
+        std::cout << "\033[?25l";
+        
     }
     
     void showCursor() {
-        #ifdef _WIN32
-            CONSOLE_CURSOR_INFO cursorInfo;
-            GetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE), &cursorInfo);
-            cursorInfo.bVisible = true;
-            SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE), &cursorInfo);
-        #else
-            std::cout << "\033[?25h";
-        #endif
+        std::cout << "\033[?25h";
     }
     
     void setConsoleTitle(const std::string& title) {
-        #ifdef _WIN32
-            SetConsoleTitleA(title.c_str());
-        #else
-            std::cout << "\033]0;" << title << "\007";
-        #endif
+        std::cout << "\033]0;" << title << "\007";
     }
     
     void pauseExecution() {

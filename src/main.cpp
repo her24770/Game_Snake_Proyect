@@ -10,7 +10,8 @@ int main() {
     
     while (true) {
         if (screen == 0) {
-            ASCIIArt::drawMainMenu(selectedOption);  // USA EL PARÁMETRO
+            system("clear");  // 🔹 LIMPIAR PANTALLA ANTES DE DIBUJAR MENÚ
+            ASCIIArt::drawMainMenu(selectedOption);  
             
             int key = InputHandler::getUserInput();
             
@@ -26,7 +27,7 @@ int main() {
             }
         }
         else {
-            // Mostrar pantalla correspondiente
+            system("clear");  // LIMPIAR PANTALLA ANTES DE MOSTRAR SUBPANTALLAS
             if (screen == 1) ASCIIArt::drawGame();
             else if (screen == 2) ASCIIArt::drawInstructions(); 
             else if (screen == 3) ASCIIArt::drawScoreboard();
