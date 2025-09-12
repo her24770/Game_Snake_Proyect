@@ -14,6 +14,7 @@ INCLUDE_DIR = include
 # Archivos fuente
 SOURCES = $(SRC_DIR)/main.cpp \
           $(SRC_DIR)/utils/WindowsConsole.cpp \
+          $(SRC_DIR)/utils/InputHandler.cpp \
           $(SRC_DIR)/rendering/ASCIIArt.cpp
 
 # Archivos objeto

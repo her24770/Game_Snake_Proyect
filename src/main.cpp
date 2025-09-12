@@ -1,37 +1,41 @@
 #include "../include/rendering/ASCIIArt.hpp"
-#include "../include/utils/WindowsConsole.hpp"
+#include "../include/utils/InputHandler.hpp"
 #include <iostream>
 
 int main() {
-    try {
-        // Configurar la consola para mostrar caracteres UTF-8/Unicode
-        #ifdef _WIN32
-            system("chcp 65001 > nul");
-        #endif
-        
-        // Mostrar el menú principal
-        ASCIIArt::drawMainMenu();
-        
-        WindowsConsole::pauseExecution();
-
-        ASCIIArt::drawPrincipalStagePreview();
-
-        // Mensaje informativo para el usuario
-        std::cout << WindowsConsole::Colors::BRIGHT_WHITE;
-        std::cout << "\n\n";
-        ASCIIArt::printCenteredLine("═══════════════════════════════════════════════");
-        ASCIIArt::printCenteredLine("   VISTA PREVIA - FASE 2: ENTORNO GRÁFICO");
-        ASCIIArt::printCenteredLine("        (Sin funcionalidad por ahora)");
-        ASCIIArt::printCenteredLine("═══════════════════════════════════════════════");
-        std::cout << WindowsConsole::Colors::RESET;
-        
-        // Pausa para que el usuario pueda ver el menú
-        WindowsConsole::pauseExecution();
-        
-        return 0;
-        
-    } catch (const std::exception& e) {
-        std::cerr << "Error: " << e.what() << std::endl;
-        return 1;
+    system("stty -icanon -echo");  // Configurar terminal Linux
+    
+    int selectedOption = 0;
+    int screen = 0; // 0=menu, 1=jugar, 2=instrucciones, 3=puntajes
+    
+    while (true) {
+        if (screen == 0) {
+            ASCIIArt::drawMainMenu(selectedOption);  // USA EL PARÁMETRO
+            
+            int key = InputHandler::getUserInput();
+            
+            if (key == InputHandler::KEY_UP) {
+                selectedOption = (selectedOption - 1 + 4) % 4;
+            }
+            else if (key == InputHandler::KEY_DOWN) {
+                selectedOption = (selectedOption + 1) % 4;  
+            }
+            else if (key == InputHandler::KEY_ENTER) {
+                if (selectedOption == 3) break; // Salir
+                screen = selectedOption + 1; // Ir a pantalla
+            }
+        }
+        else {
+            // Mostrar pantalla correspondiente
+            if (screen == 1) ASCIIArt::drawGame();
+            else if (screen == 2) ASCIIArt::drawInstructions(); 
+            else if (screen == 3) ASCIIArt::drawScoreboard();
+            
+            int key = InputHandler::getUserInput();
+            if (key == InputHandler::KEY_ESC) screen = 0; // Volver al menú
+        }
     }
+    
+    system("stty icanon echo");  // Restaurar terminal
+    return 0;
 }
