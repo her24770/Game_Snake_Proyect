@@ -29,6 +29,7 @@ namespace ASCIIArt {
     void drawSnakeTitle();
     void drawSnakeArt();
     void drawDecorations();
+    void drawInstructionsTitle();
     
     // Utilidades de formato
     std::vector<std::string> getSnakeTitleArt();

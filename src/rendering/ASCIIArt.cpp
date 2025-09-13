@@ -109,8 +109,41 @@ void drawGame() {
 }
 
 void drawInstructions() {
-    system("clear");  
-    std::cout << "\n\n=== INSTRUCCIONES ===\n\nESC para volver\n";
+    system("clear");
+    WindowsConsole::clearScreen();
+    WindowsConsole::hideCursor();
+    WindowsConsole::setConsoleTitle("Snake Game - Instrucciones");
+    std::cout << std::endl;
+
+    //Borde superior
+    drawMenuBorder();
+
+    //Título de instrucciones
+    drawInstructionsTitle();
+    std::cout << WindowsConsole::Colors::BRIGHT_WHITE;
+
+    //Instrucciones del juego
+    std::vector<std::string> snakeInstruccion = {
+        "     __           1.Usa las flechas del teclado para mover la serpiente.             ",
+        "    {0O}          2.Para un segundo jugador, usar las teclas W,A,S,D.                ",
+        "    \\__/          3. Come la comida ¤ para crecer y ganar puntos.                  ",
+        "    /^/           4. Evita chocar contra las paredes ▓ o con la serpiente ◯, ⦿, @. ",
+        "   ( (           5.Cada comida vale 10 puntos.                               ",
+        "    \\_\\_____      6. Come todo lo que puedas y alcanza la puntuacion mas alta     ",
+        "   (_______)                                                                         ",
+        "   (_________()Oo                                                                    "
+    };
+
+    for (const auto& line : snakeInstruccion) {
+        printCenteredLine(line);
+    }
+
+
+    //Borde inferior
+    drawMenuBorder();
+
+
+    std::cout << "\n\nESC para volver\n";
 }
 
 void drawScoreboard() {
@@ -177,6 +210,28 @@ std::string centerString(const std::string& text, int width) {
     void drawObject(std::vector<std::vector<std::string>>& pantalla, int x, int y, const std::string& sym){
         if(x>0&& x<CONSOLE_WIDTH && y>0 && y<CONSOLE_HEIGHT) //Verifica que está en los límites del escenario
             pantalla[y][x] = sym; //Agrega el objeto dentro del espacio de la matríz
+    }
+
+    void drawInstructionsTitle(){
+        std::cout << WindowsConsole::Colors::BRIGHT_GREEN;
+        
+        // Arte ASCII para titulo Instrucciones
+        std::vector<std::string> title = {
+            "               ",
+            "               ",
+            "▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄",
+            "█▄ ▄██ ▀██ ██ ▄▄▄ █▄▄ ▄▄██ ▄▄▀██ ██ ██ ▄▄▀██ ▄▄▀█▄ ▄██ ▄▄▄ ██ ▀██ ██ ▄▄▄██ ▄▄▄ █",
+            "██ ███ █ █ ██▄▄▄▀▀███ ████ ▀▀▄██ ██ ██ █████ █████ ███ ███ ██ █ █ ██ ▄▄▄██▄▄▄▀▀█",
+            "█▀ ▀██ ██▄ ██ ▀▀▀ ███ ████ ██ ██▄▀▀▄██ ▀▀▄██ ▀▀▄█▀ ▀██ ▀▀▀ ██ ██▄ ██ ▀▀▀██ ▀▀▀ █",
+            "▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀"
+
+        };
+        
+        for (const auto& line : title) {
+            printCenteredLine(line);
+        }
+        
+        std::cout << WindowsConsole::Colors::RESET << std::endl;
     }
 
 
