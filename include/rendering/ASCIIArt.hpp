@@ -38,7 +38,7 @@ namespace ASCIIArt {
     void printColoredCenteredLine(const std::string& text, const std::string& color);
 
 
-    void drawGame();
+    void drawGame(int lastKey = 0);
     void drawInstructions();
     void drawScoreboard();
 }

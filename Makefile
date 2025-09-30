@@ -3,7 +3,7 @@
 
 # Compilador y flags
 CXX = g++
-CXXFLAGS = -std=c++17 -Wall -Wextra -O2
+CXXFLAGS = -std=c++17 -Wall -Wextra -O2 -pthread
 INCLUDES = -Iinclude
 
 # Directorios
@@ -15,7 +15,10 @@ INCLUDE_DIR = include
 SOURCES = $(SRC_DIR)/main.cpp \
           $(SRC_DIR)/utils/WindowsConsole.cpp \
           $(SRC_DIR)/utils/InputHandler.cpp \
-          $(SRC_DIR)/rendering/ASCIIArt.cpp
+          $(SRC_DIR)/rendering/ASCIIArt.cpp \
+          $(SRC_DIR)/core/ThreadSharedData.cpp \
+          $(SRC_DIR)/core/Snake.cpp \
+          $(SRC_DIR)/threads/InputThread.cpp
 
 # Archivos objeto
 OBJECTS = $(SOURCES:$(SRC_DIR)/%.cpp=$(OBJ_DIR)/%.o)
