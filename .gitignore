@@ -95,10 +95,6 @@ docs/.~lock.*
 Thumbs.db
 Desktop.ini
 
-# 🐛 Core dumps (Linux)
-core
-*.core
-
 # 🧹 Precompiled headers (si los usas)
 *.gch
 *.pch
