@@ -1,42 +1,75 @@
 #include "../include/rendering/ASCIIArt.hpp"
 #include "../include/utils/InputHandler.hpp"
+#include "../include/core/ThreadSharedData.hpp"
+#include "../include/threads/InputThread.hpp"
 #include <iostream>
+#include <pthread.h>
+#include <unistd.h>
 
 int main() {
-    system("stty -icanon -echo");  // Configurar terminal Linux
+    system("stty -icanon -echo");
+    
+    SharedGameData sharedData;
+    pthread_t inputThread;
+    pthread_create(&inputThread, nullptr, inputThreadFunction, &sharedData);
     
     int selectedOption = 0;
-    int screen = 0; // 0=menu, 1=jugar, 2=instrucciones, 3=puntajes
+    int screen = 0;
+    
+    // Dibujar menú inicial
+    system("clear");
+    ASCIIArt::drawMainMenu(selectedOption);
     
     while (true) {
-        if (screen == 0) {
-            system("clear");  // 🔹 LIMPIAR PANTALLA ANTES DE DIBUJAR MENÚ
-            ASCIIArt::drawMainMenu(selectedOption);  
-            
-            int key = InputHandler::getUserInput();
-            
-            if (key == InputHandler::KEY_UP) {
-                selectedOption = (selectedOption - 1 + 4) % 4;
+        int key = sharedData.getKey();
+
+        // AGREGAR ESTA LÍNEA
+    if(key != InputHandler::KEY_NONE) {
+        std::cout << "[MAIN] Tecla recibida: " << key << std::endl;
+    }
+        
+        if (key != InputHandler::KEY_NONE) {
+            if (screen == 0) {
+                // Menu principal
+                if (key == InputHandler::KEY_UP) {
+                    selectedOption = (selectedOption - 1 + 4) % 4;
+                }
+                else if (key == InputHandler::KEY_DOWN) {
+                    selectedOption = (selectedOption + 1) % 4;
+                }
+                else if (key == InputHandler::KEY_ENTER) {
+                    if (selectedOption == 3) break;
+                    screen = selectedOption + 1;
+                }
+                
+                // Redibujar menú
+                system("clear");
+                if (screen == 0) {
+                    ASCIIArt::drawMainMenu(selectedOption);
+                } else if (screen == 1) {
+                    ASCIIArt::drawGame(key);
+                } else if (screen == 2) {
+                    ASCIIArt::drawInstructions();
+                } else if (screen == 3) {
+                    ASCIIArt::drawScoreboard();
+                }
             }
-            else if (key == InputHandler::KEY_DOWN) {
-                selectedOption = (selectedOption + 1) % 4;  
-            }
-            else if (key == InputHandler::KEY_ENTER) {
-                if (selectedOption == 3) break; // Salir
-                screen = selectedOption + 1; // Ir a pantalla
+            else {
+                // Subpantallas
+                if (key == InputHandler::KEY_ESC) {
+                    screen = 0;
+                    system("clear");
+                    ASCIIArt::drawMainMenu(selectedOption);
+                }
             }
         }
-        else {
-            system("clear");  // LIMPIAR PANTALLA ANTES DE MOSTRAR SUBPANTALLAS
-            if (screen == 1) ASCIIArt::drawGame();
-            else if (screen == 2) ASCIIArt::drawInstructions(); 
-            else if (screen == 3) ASCIIArt::drawScoreboard();
-            
-            int key = InputHandler::getUserInput();
-            if (key == InputHandler::KEY_ESC) screen = 0; // Volver al menú
-        }
+        
+        usleep(16000);
     }
     
-    system("stty icanon echo");  // Restaurar terminal
+    sharedData.stop();
+    pthread_join(inputThread, nullptr);
+    system("stty icanon echo");
+    
     return 0;
 }

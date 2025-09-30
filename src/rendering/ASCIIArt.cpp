@@ -1,7 +1,9 @@
 #include "../../include/rendering/ASCIIArt.hpp"
 #include "../../include/utils/WindowsConsole.hpp"
+#include "../../include/utils/InputHandler.hpp"
 #include <iostream>
 #include <iomanip>
+
 
 namespace ASCIIArt {
     
@@ -49,7 +51,7 @@ namespace ASCIIArt {
     }
 
 // Pantallas simples
-void drawGame() {
+void drawGame(int lastKey) {
     system("clear");
     int score = 10;
     std::vector<std::vector<std::string>> pantalla(CONSOLE_HEIGHT, std::vector<std::string>(CONSOLE_WIDTH, " "));
@@ -83,7 +85,7 @@ void drawGame() {
     //Comida
     drawObject(pantalla, 30,23, "¤");
     
-    system("cls");
+    system("clear");
     
     std::cout << "\n\n=== JUGANDO ===\n";
     std::cout << WindowsConsole::Colors::BRIGHT_WHITE;
