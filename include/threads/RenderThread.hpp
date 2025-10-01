@@ -9,7 +9,7 @@
 
 struct RenderThreadData {
     Snake* snake1;
-    Snake* snake2;
+    Snake* snake2 = nullptr;
     Food* food;
     SharedGameData* sharedData;
     bool* runningRender;

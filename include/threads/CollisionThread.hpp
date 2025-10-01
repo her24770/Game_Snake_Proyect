@@ -6,7 +6,7 @@
 
 struct CollisionThreadData {
     Snake* snake1;
-    Snake* snake2;
+    Snake* snake2 = nullptr;
     SharedGameData* sharedData;
     bool* running;
     bool* gameOver;

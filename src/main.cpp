@@ -20,6 +20,7 @@ int main() {
     pthread_t inputThread;
     pthread_create(&inputThread, nullptr, inputThreadFunction, &sharedData);
     
+    const int MENU_OPCIONES = 5;
     int selectedOption = 0;
     int screen = 0;
 
@@ -52,13 +53,13 @@ int main() {
             if (screen == 0) {
                 // Menu principal
                 if (key == InputHandler::KEY_UP) {
-                    selectedOption = (selectedOption - 1 + 4) % 4;
+                    selectedOption = (selectedOption - 1 + MENU_OPCIONES) % MENU_OPCIONES;
                 }
                 else if (key == InputHandler::KEY_DOWN) {
-                    selectedOption = (selectedOption + 1) % 4;
+                    selectedOption = (selectedOption + 1) % MENU_OPCIONES;
                 }
                 else if (key == InputHandler::KEY_ENTER) {
-                    if (selectedOption == 3) break;
+                    if (selectedOption == MENU_OPCIONES - 1) break;
                     screen = selectedOption + 1;
                 }
                 
@@ -67,6 +68,63 @@ int main() {
                 if (screen == 0) {
                     ASCIIArt::drawMainMenu(selectedOption);
                 } else if (screen == 1) {
+                    sharedData.getKey();
+                    sharedData.getKey2();
+                    //Se crean las serpientes con una coordenada inicial
+                    Snake snake1(10,8);
+                    Food food;
+                    //Se almacenan los parametros par alos hilos de movimiento 
+                    ThreadData snake1Data = { &snake1, &sharedData, 1 };
+                    bool runningMovement = true;
+                    bool runningRender = true;
+                    bool gameOver = false;
+                    
+                    RenderThreadData renderData = { &snake1, nullptr, &food, &sharedData, &runningRender };
+                    
+                    snake1Data.runningMovement = &runningMovement;
+                    //Se crean hilos para el movimiento de las serpientes y reescritura del escenario
+                    FoodThreadData foodData = { &food, &snake1, nullptr, &sharedData, &runningMovement };
+                    CollisionThreadData collisionData = { &snake1, nullptr, &sharedData, &runningMovement, &gameOver };
+
+                    pthread_t renderThread, snake1Thread, foodThread, collisionThread;
+
+                    pthread_create(&snake1Thread, nullptr, snakeMovementThread, &snake1Data);
+                    pthread_create(&foodThread, nullptr, foodThreadFunction, &foodData);
+                    pthread_create(&collisionThread, nullptr, collisionThreadFunction, &collisionData);
+                    pthread_create(&renderThread, nullptr, renderThreadFunction, &renderData);
+
+                    // Bucle de control de pantalla (para ESC y Game Over)
+                    bool escPressed = false;
+                    while(screen == 1 && !gameOver) {
+                        {
+                            std::lock_guard<std::mutex> lock(sharedData.mtx);
+                            if(sharedData.keyPlayer1 == InputHandler::KEY_ESC) {
+                                escPressed = true;
+                                // Limpiar ESC para que no interfiera
+                                sharedData.keyPlayer1 = InputHandler::KEY_NONE;
+                            }
+                        }
+                        usleep(16000);
+                    }
+                    if(escPressed) screen = 0;
+                    // Mostrar pantalla Game Over si hubo colisión
+                    runningMovement = false;
+                    runningRender = false;
+
+                    // Esperar a que terminen los hilos antes de mostrar Game Over
+                    pthread_join(snake1Thread, nullptr);
+                    pthread_join(foodThread, nullptr);
+                    pthread_join(collisionThread, nullptr);
+                    pthread_join(renderThread, nullptr);
+
+                    // Ahora sí mostrar Game Over
+                    if(gameOver) {
+                        GAME::renderGameOver(snake1, nullptr);
+                        sleep(5);
+                        screen = 0;
+                    }
+                }
+                else if (screen == 2) {
                     sharedData.getKey();
                     sharedData.getKey2();
                     //Se crean las serpientes con una coordenada inicial
@@ -98,7 +156,7 @@ int main() {
 
                     // Bucle de control de pantalla (para ESC y Game Over)
                     bool escPressed = false;
-                    while(screen == 1 && !gameOver) {
+                    while(screen == 2 && !gameOver) {
                         {
                             std::lock_guard<std::mutex> lock(sharedData.mtx);
                             if(sharedData.keyPlayer1 == InputHandler::KEY_ESC || 
@@ -125,13 +183,14 @@ int main() {
 
                     // Ahora sí mostrar Game Over
                     if(gameOver) {
-                        GAME::renderGameOver(snake1, snake2);
+                        GAME::renderGameOver(snake1, &snake2);
                         sleep(5);
                         screen = 0;
                     }
-                } else if (screen == 2) {
+                }
+                else if (screen == 3) {
                     ASCIIArt::drawInstructions();
-                } else if (screen == 3) {
+                } else if (screen == 4) {
                     ASCIIArt::drawScoreboard();
                 }
             }
