@@ -71,7 +71,7 @@ namespace GAME {
 
 
 
-void GAME::renderGameOver(const Snake& snake1, const Snake& snake2) {
+void GAME::renderGameOver(const Snake& snake1, const Snake* snake2) {
     using namespace GAME;
     std::vector<std::vector<std::string>> pantalla(GAME::CONSOLE_HEIGHT, std::vector<std::string>(GAME::CONSOLE_WIDTH, " "));
     // Dibujar bordes
@@ -123,8 +123,10 @@ void GAME::renderGameOver(const Snake& snake1, const Snake& snake2) {
         std::cout << std::endl;
     }
 
-    std::cout << WindowsConsole::Colors::BRIGHT_WHITE
-              << "\nPuntaje Final Jugador 1: " << snake1.getPuntuacion()
-              << "\nPuntaje Final Jugador 2: " << snake2.getPuntuacion()
-              << WindowsConsole::Colors::RESET << std::endl;
+    std::cout << WindowsConsole::Colors::BRIGHT_WHITE << std::endl;
+        std::cout << "\nPuntaje Final Jugador 1: " << snake1.getPuntuacion() << std::endl;
+        if (snake2) {
+        std::cout << "Puntaje Final Jugador 2: " << snake2->getPuntuacion() << std::endl;
+        }
+    std::cout << WindowsConsole::Colors::RESET << std::endl;
 }

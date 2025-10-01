@@ -8,7 +8,7 @@
 struct FoodThreadData {
     Food* food;
     Snake* snake1;
-    Snake* snake2;
+    Snake* snake2 = nullptr;
     SharedGameData* sharedData;
     bool* running;
 };

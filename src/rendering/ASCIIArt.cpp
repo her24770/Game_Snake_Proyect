@@ -30,10 +30,11 @@ namespace ASCIIArt {
         printCenteredLine(topFrame);
 
         std::vector<std::string> options = {
-            (selectedOption == 0 ? "        ║           ➤  Jugar               ║" : "       ║              Jugar               ║"),
-            (selectedOption == 1 ? "        ║        ➤  Instrucciones          ║" : "       ║           Instrucciones          ║"),
-            (selectedOption == 2 ? "        ║          ➤  Puntajes             ║" : "       ║             Puntajes             ║"),
-            (selectedOption == 3 ? "        ║           ➤  Salir               ║" : "       ║              Salir               ║")
+            (selectedOption == 0 ? "        ║      ➤  Jugar (1 jugador)        ║" : "       ║         Jugar (1 jugador)        ║"),
+            (selectedOption == 1 ? "        ║     ➤  Jugar (2 jugadores)       ║" : "       ║        Jugar (2 jugadores)       ║"),
+            (selectedOption == 2 ? "        ║        ➤  Instrucciones          ║" : "       ║           Instrucciones          ║"),
+            (selectedOption == 3 ? "        ║          ➤  Puntajes             ║" : "       ║             Puntajes             ║"),
+            (selectedOption == 4 ? "        ║           ➤  Salir               ║" : "       ║              Salir               ║")
         };
 
         for (const auto& option : options) {
