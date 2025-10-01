@@ -22,8 +22,6 @@ namespace ASCIIArt {
     void drawVerticalBorder(const std::string& content, int totalWidth);
     std::string centerString(const std::string& text, int width);
     std::string padString(const std::string& text, int width, char padChar = ' ');
-    void drawBorder_PS(std::vector<std::vector<std::string>>& pantalla);
-    void drawObject(std::vector<std::vector<std::string>>& pantalla, int x, int y, const std::string& sym);
     
     // Arte ASCII específico
     void drawSnakeTitle();
@@ -38,7 +36,6 @@ namespace ASCIIArt {
     void printColoredCenteredLine(const std::string& text, const std::string& color);
 
 
-    void drawGame(int lastKey = 0);
     void drawInstructions();
     void drawScoreboard();
 }
