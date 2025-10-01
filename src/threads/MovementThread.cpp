@@ -11,6 +11,7 @@ void* snakeMovementThread(void* arg) {
         SharedGameData* sharedData;
         int playerId; 
         bool* runningMovement;
+        int velocidad;
     };
 
     ThreadData* data = (ThreadData*)arg;
@@ -28,7 +29,7 @@ void* snakeMovementThread(void* arg) {
             data->snake->mover();
         }
 
-        usleep(150000); // velocidad del juego
+        usleep(data->velocidad); // velocidad del juego
     }
 
     return nullptr;
