@@ -100,3 +100,7 @@ void Snake::updateDirectionFromKey(int key, int playerId) {
         cambiarDireccion(nuevaDireccion); // Usa la función ya existente que evita dirección opuesta
     }
 }
+
+void Snake::sumarPuntos(int puntos) {
+    puntuacion += puntos;
+}

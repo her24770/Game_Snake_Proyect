@@ -1,12 +1,13 @@
 #include "../../include/rendering/Game.hpp"
 #include "../../include/utils/WindowsConsole.hpp"
 #include "../../include/utils/InputHandler.hpp"
+#include "../../include/core/Food.hpp"
 #include <iostream>
 #include <iomanip>
 
 namespace GAME {
     //Crea toda la vista incluyendo las serpientes, bordes y la comida
-    void renderGameScreen(const Snake& snake1, int comidaX, int comidaY, const Snake* snake2) {
+    void renderGameScreen(const Snake& snake1, const Food& food, const Snake* snake2) {
         std::vector<std::vector<std::string>> pantalla(CONSOLE_HEIGHT, std::vector<std::string>(CONSOLE_WIDTH, " "));
 
         // Dibujar bordes
@@ -33,8 +34,13 @@ namespace GAME {
         if(snake2) drawSnakeOnScreen(*snake2, "@", "⦿");
 
         // Dibujar comida
-        if(comidaX>0 && comidaX<CONSOLE_WIDTH && comidaY>0 && comidaY<CONSOLE_HEIGHT)
-            pantalla[comidaY][comidaX] = "¤";
+        if(food.isActive()) {
+            auto foodPos = food.getPosition();
+            int comidaX = foodPos.first;
+            int comidaY = foodPos.second;
+            if(comidaX>0 && comidaX<CONSOLE_WIDTH && comidaY>0 && comidaY<CONSOLE_HEIGHT)
+                pantalla[comidaY][comidaX] = "¤";
+        }
 
         // Limpiar consola y dibujar
         WindowsConsole::clearScreen();

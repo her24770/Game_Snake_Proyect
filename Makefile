@@ -21,7 +21,9 @@ SOURCES = $(SRC_DIR)/main.cpp \
           $(SRC_DIR)/core/Snake.cpp \
           $(SRC_DIR)/threads/InputThread.cpp \
 		  $(SRC_DIR)/threads/MovementThread.cpp \
-		  $(SRC_DIR)/threads/RenderThread.cpp
+		  $(SRC_DIR)/threads/RenderThread.cpp \
+		  $(SRC_DIR)/core/Food.cpp \
+		  $(SRC_DIR)/threads/FoodThread.cpp
 
 # Archivos objeto
 OBJECTS = $(SOURCES:$(SRC_DIR)/%.cpp=$(OBJ_DIR)/%.o)

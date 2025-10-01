@@ -21,6 +21,7 @@ public:
     const std::vector<std::pair<int, int>>& getCuerpo() const;
     int getPuntuacion() const;
     void updateDirectionFromKey(int key, int playerId);
+    void sumarPuntos(int puntos);
 };
 
 #endif
