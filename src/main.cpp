@@ -64,9 +64,10 @@ int main() {
                 if (screen == 0) {
                     ASCIIArt::drawMainMenu(selectedOption);
                 } else if (screen == 1) {
+                    //Se crean las serpientes con una coordenada inicial
                     Snake snake1(10,8);
                     Snake snake2(10,16);
-                
+                    //Se almacenan los parametros par alos hilos de movimiento 
                     ThreadData snake1Data = { &snake1, &sharedData, 1 };
                     ThreadData snake2Data = { &snake2, &sharedData, 2 };
                     bool runningMovement = true;
@@ -76,7 +77,7 @@ int main() {
                     
                     snake1Data.runningMovement = &runningMovement;
                     snake2Data.runningMovement = &runningMovement;
-
+                    //Se crean hilos para el movimiento de las serpientes y reescritura del escenario
                     pthread_t renderThread, snake1Thread, snake2Thread;
                     pthread_create(&snake1Thread, nullptr, snakeMovementThread, &snake1Data);
                     pthread_create(&snake2Thread, nullptr, snakeMovementThread, &snake2Data);
@@ -84,14 +85,14 @@ int main() {
 
                     // Bucle de control de pantalla (para ESC)
                     while(screen == 1) {
-                        int key = sharedData.getKey();   // Puedes usar key principal solo para ESC
+                        int key = sharedData.getKey();
                         if(key == InputHandler::KEY_ESC) screen = 0;
                         usleep(16000);
                     }
 
                     runningMovement = false;
                     runningRender = false;
-
+                    //Se finalizan los hilos para no gastar recursos
                     pthread_join(snake1Thread, nullptr);
                     pthread_join(snake2Thread, nullptr);
                     pthread_join(renderThread, nullptr);

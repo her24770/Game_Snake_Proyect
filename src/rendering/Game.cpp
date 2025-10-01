@@ -5,6 +5,7 @@
 #include <iomanip>
 
 namespace GAME {
+    //Crea toda la vista incluyendo las serpientes, bordes y la comida
     void renderGameScreen(const Snake& snake1, int comidaX, int comidaY, const Snake* snake2) {
         std::vector<std::vector<std::string>> pantalla(CONSOLE_HEIGHT, std::vector<std::string>(CONSOLE_WIDTH, " "));
 

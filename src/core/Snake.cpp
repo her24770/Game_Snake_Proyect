@@ -9,7 +9,7 @@ Snake::Snake(int x, int y) : cabeza({x, y}), direccion(1), tamano(3), puntuacion
 }
 
 void Snake::mover() {
-    // Guardamos la posición actual de la cabeza
+    // Guarda la posición actual de la cabeza
     std::pair<int, int> prevHead = cabeza;
 
     // Actualizamos la cabeza según la dirección
@@ -40,9 +40,9 @@ void Snake::mover() {
         prevPos = cuerpo[0];    // Posición de la cabeza actual
         cuerpo[0] = cabeza;     // La cabeza es el primer elemento
         for (size_t i = 1; i < cuerpo.size(); ++i) {
-            tempPos = cuerpo[i];  // Guardamos la posición actual del segmento
+            tempPos = cuerpo[i];  // Guarda la posición actual del segmento
             cuerpo[i] = prevPos;  // Este segmento sigue al anterior
-            prevPos = tempPos;    // Actualizamos prevPos para el siguiente segmento
+            prevPos = tempPos;    // Actualiza prevPos para el siguiente segmento
         }
     }
 
@@ -81,7 +81,7 @@ void Snake::updateDirectionFromKey(int key, int playerId) {
     if(playerId == 1) {
         // Jugador 1: WASD
         switch(key) {
-            case InputHandler::KEY_W:    nuevaDireccion = 0; break;
+            case InputHandler::KEY_W: nuevaDireccion = 0; break;
             case InputHandler::KEY_D: nuevaDireccion = 1; break;
             case InputHandler::KEY_S:  nuevaDireccion = 2; break;
             case InputHandler::KEY_A:  nuevaDireccion = 3; break;
@@ -89,7 +89,7 @@ void Snake::updateDirectionFromKey(int key, int playerId) {
     } else if(playerId == 2) {
         // Jugador 2: Flechas
         switch(key) {
-            case InputHandler::KEY_UP:    nuevaDireccion = 0; break;
+            case InputHandler::KEY_UP: nuevaDireccion = 0; break;
             case InputHandler::KEY_RIGHT: nuevaDireccion = 1; break;
             case InputHandler::KEY_DOWN:  nuevaDireccion = 2; break;
             case InputHandler::KEY_LEFT:  nuevaDireccion = 3; break;
