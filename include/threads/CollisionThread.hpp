@@ -10,7 +10,6 @@ struct CollisionThreadData {
     SharedGameData* sharedData;
     bool* running;
     bool* gameOver;
-    AudioThreadData* audioData;
 };
 
 void* collisionThreadFunction(void* arg);
