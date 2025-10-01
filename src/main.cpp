@@ -67,6 +67,8 @@ int main() {
                 if (screen == 0) {
                     ASCIIArt::drawMainMenu(selectedOption);
                 } else if (screen == 1) {
+                    sharedData.getKey();
+                    sharedData.getKey2();
                     //Se crean las serpientes con una coordenada inicial
                     Snake snake1(10,8);
                     Snake snake2(10,16);
@@ -95,12 +97,21 @@ int main() {
                     pthread_create(&renderThread, nullptr, renderThreadFunction, &renderData);
 
                     // Bucle de control de pantalla (para ESC y Game Over)
+                    bool escPressed = false;
                     while(screen == 1 && !gameOver) {
-                        int key = sharedData.getKey();
-                        if(key == InputHandler::KEY_ESC) screen = 0;
+                        {
+                            std::lock_guard<std::mutex> lock(sharedData.mtx);
+                            if(sharedData.keyPlayer1 == InputHandler::KEY_ESC || 
+                               sharedData.keyPlayer2 == InputHandler::KEY_ESC) {
+                                escPressed = true;
+                                // Limpiar ESC para que no interfiera
+                                sharedData.keyPlayer1 = InputHandler::KEY_NONE;
+                                sharedData.keyPlayer2 = InputHandler::KEY_NONE;
+                            }
+                        }
                         usleep(16000);
                     }
-
+                    if(escPressed) screen = 0;
                     // Mostrar pantalla Game Over si hubo colisión
                     runningMovement = false;
                     runningRender = false;

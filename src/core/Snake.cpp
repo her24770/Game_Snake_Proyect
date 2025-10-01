@@ -9,46 +9,39 @@ Snake::Snake(int x, int y) : cabeza({x, y}), direccion(1), tamano(3), puntuacion
 }
 
 void Snake::mover() {
-    // Guarda la posición actual de la cabeza
     std::pair<int, int> prevHead = cabeza;
 
-    // Actualizamos la cabeza según la dirección
+    // Actualizamos la cabeza según la dirección (solo 0-3)
     switch (direccion) {
         case 0: // Arriba
-        case 7:
             cabeza.second -= 1;
             break;
         case 1: // Derecha
-        case 8:
             cabeza.first += 1;
             break;
         case 2: // Abajo
-        case 9:
             cabeza.second += 1;
             break;
         case 3: // Izquierda
-        case 10:
             cabeza.first -= 1;
             break;
     }
 
-    // Guardamos la posición anterior de cada segmento
     std::pair<int, int> prevPos;
     std::pair<int, int> tempPos;
 
     if (!cuerpo.empty()) {
-        prevPos = cuerpo[0];    // Posición de la cabeza actual
-        cuerpo[0] = cabeza;     // La cabeza es el primer elemento
+        prevPos = cuerpo[0];
+        cuerpo[0] = cabeza;
         for (size_t i = 1; i < cuerpo.size(); ++i) {
-            tempPos = cuerpo[i];  // Guarda la posición actual del segmento
-            cuerpo[i] = prevPos;  // Este segmento sigue al anterior
-            prevPos = tempPos;    // Actualiza prevPos para el siguiente segmento
+            tempPos = cuerpo[i];
+            cuerpo[i] = prevPos;
+            prevPos = tempPos;
         }
     }
 
-    // Ajustamos el tamaño del vector si la serpiente ha crecido
     while (cuerpo.size() < (size_t)tamano) {
-        cuerpo.push_back(prevPos); // Añadimos un segmento al final
+        cuerpo.push_back(prevPos);
     }
 }
 
@@ -79,25 +72,25 @@ void Snake::updateDirectionFromKey(int key, int playerId) {
     int nuevaDireccion = -1;
 
     if(playerId == 1) {
-        // Jugador 1: WASD
-        switch(key) {
-            case InputHandler::KEY_W: nuevaDireccion = 0; break;
-            case InputHandler::KEY_D: nuevaDireccion = 1; break;
-            case InputHandler::KEY_S:  nuevaDireccion = 2; break;
-            case InputHandler::KEY_A:  nuevaDireccion = 3; break;
-        }
-    } else if(playerId == 2) {
-        // Jugador 2: Flechas
+        // Jugador 1: Flechas (lee de getKey donde se escriben flechas)
         switch(key) {
             case InputHandler::KEY_UP: nuevaDireccion = 0; break;
             case InputHandler::KEY_RIGHT: nuevaDireccion = 1; break;
-            case InputHandler::KEY_DOWN:  nuevaDireccion = 2; break;
-            case InputHandler::KEY_LEFT:  nuevaDireccion = 3; break;
+            case InputHandler::KEY_DOWN: nuevaDireccion = 2; break;
+            case InputHandler::KEY_LEFT: nuevaDireccion = 3; break;
+        }
+    } else if(playerId == 2) {
+        // Jugador 2: WASD (lee de getKey2 donde se escribe WASD)
+        switch(key) {
+            case InputHandler::KEY_W: nuevaDireccion = 0; break;
+            case InputHandler::KEY_D: nuevaDireccion = 1; break;
+            case InputHandler::KEY_S: nuevaDireccion = 2; break;
+            case InputHandler::KEY_A: nuevaDireccion = 3; break;
         }
     }
 
     if(nuevaDireccion != -1) {
-        cambiarDireccion(nuevaDireccion); // Usa la función ya existente que evita dirección opuesta
+        cambiarDireccion(nuevaDireccion);
     }
 }
 
