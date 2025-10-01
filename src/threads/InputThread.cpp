@@ -4,8 +4,8 @@
 #include <string.h>
 
 void* inputThreadFunction(void* arg) {
-    SharedGameData* data = (SharedGameData*)arg;
-    
+        SharedGameData* data = (SharedGameData*)arg;
+
     while(true) {
         bool shouldRun;
         {
@@ -14,22 +14,30 @@ void* inputThreadFunction(void* arg) {
         }
         
         if(!shouldRun) break;
-        
-        int key = InputHandler::getUserInput();
-        if(key != InputHandler::KEY_NONE) {
-            data->setKey(key);
-        }
 
-        // AGREGAR ESTAS LÍNEAS DE DEBUG
+        int key = InputHandler::getUserInputNonBlocking
+        ();
         if(key != InputHandler::KEY_NONE) {
+            // Debug
             char buffer[100];
             sprintf(buffer, "[HILO] Tecla capturada: %d\n", key);
             write(STDOUT_FILENO, buffer, strlen(buffer));
-            data->setKey(key);
+
+            // Asignar a jugador correspondiente
+            if(key == InputHandler::KEY_W || key == InputHandler::KEY_A ||
+               key == InputHandler::KEY_S || key == InputHandler::KEY_D) {
+                data->setKey(key); // jugador 1 (WASD)
+            } else if(key == InputHandler::KEY_UP || key == InputHandler::KEY_DOWN ||
+                      key == InputHandler::KEY_LEFT || key == InputHandler::KEY_RIGHT) {
+                data->setKey2(key); // jugador 2 (flechas)
+            }else if(key == InputHandler::KEY_ENTER || key == InputHandler::KEY_ESC) {
+                // lo tratamos como "global" → meterlo en keyPlayer1
+                data->setKey(key);
+            }
         }
-        
+
         usleep(10000);
     }
-    
+
     return nullptr;
 }

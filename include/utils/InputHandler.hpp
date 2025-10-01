@@ -9,6 +9,10 @@ namespace InputHandler {
     const int KEY_RIGHT = 4;
     const int KEY_ENTER = 5;
     const int KEY_ESC = 6;
+    const int KEY_W = 7;
+    const int KEY_A = 8;
+    const int KEY_S = 9;
+    const int KEY_D = 10;
     
     int getUserInput();
     int getUserInputNonBlocking();
