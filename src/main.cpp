@@ -20,7 +20,6 @@ int main() {
     SharedGameData sharedData;
     pthread_t inputThread;
     pthread_create(&inputThread, nullptr, inputThreadFunction, &sharedData);
-
     //Audio
     AudioThreadData audioData;
     audioData.currentTrack.store(AUDIO_MENU);
@@ -30,25 +29,37 @@ int main() {
     pthread_t audioThread;
     pthread_create(&audioThread, nullptr, audioThreadFunction, &audioData);
     
-    const int MENU_OPCIONES = 5;
+    const int MENU_OPCIONES = 6;
+    const int SPEED_OPTION = 4; 
     int selectedOption = 0;
     int screen = 0;
     int lastScreen = -1;
+    int speedIndex = 1; // 0=Lento,1=Medio,2=Rápido
+    int velocidad = 150000; // default value (Medio)
 
-    
+    // helper para actualizar velocidad desde speedIndex
+    auto updateVelFromIndex = [&](int idx) {
+        switch(idx) {
+            case 0: velocidad = 250000; break; // Lento
+            case 1: velocidad = 80000; break; // Medio
+            case 2: velocidad = 40000;  break; // Rápido
+            default: velocidad = 150000; break;
+        }
+    };
+    updateVelFromIndex(speedIndex);
+
     // Preparar datos para hilos de movimiento
     struct ThreadData {
         Snake* snake;
         SharedGameData* sharedData;
         int playerId;
         bool* runningMovement;
+        int velocidad;
     };
-    
-    
     
     // Dibujar menú inicial
     system("clear");
-    ASCIIArt::drawMainMenu(selectedOption);
+    ASCIIArt::drawMainMenu(selectedOption, speedIndex);
     
     while (true) {
         int key1 = sharedData.getKey();
@@ -80,6 +91,14 @@ int main() {
                 else if (key == InputHandler::KEY_DOWN) {
                     selectedOption = (selectedOption + 1) % MENU_OPCIONES;
                 }
+                else if (key == InputHandler::KEY_LEFT && selectedOption == SPEED_OPTION) {
+                    speedIndex = (speedIndex - 1 + 3) % 3;
+                    updateVelFromIndex(speedIndex);
+                }
+                else if (key == InputHandler::KEY_RIGHT && selectedOption == SPEED_OPTION) {
+                    speedIndex = (speedIndex + 1) % 3;
+                    updateVelFromIndex(speedIndex);
+                }
                 else if (key == InputHandler::KEY_ENTER) {
                     if (selectedOption == MENU_OPCIONES - 1) break;
                     screen = selectedOption + 1;
@@ -88,15 +107,15 @@ int main() {
                 // Redibujar menú
                 system("clear");
                 if (screen == 0) {
-                    ASCIIArt::drawMainMenu(selectedOption);
-                } else if (screen == 1) {
+                    ASCIIArt::drawMainMenu(selectedOption, speedIndex);
+                } 
+                else if (screen == 1) {
                     sharedData.getKey();
                     sharedData.getKey2();
-                    //Se crean las serpientes con una coordenada inicial
                     Snake snake1(10,8);
                     Food food;
-                    //Se almacenan los parametros par alos hilos de movimiento 
-                    ThreadData snake1Data = { &snake1, &sharedData, 1 };
+
+                    ThreadData snake1Data = { &snake1, &sharedData, 1, nullptr, velocidad };
                     bool runningMovement = true;
                     bool runningRender = true;
                     bool gameOver = false;
@@ -104,7 +123,7 @@ int main() {
                     RenderThreadData renderData = { &snake1, nullptr, &food, &sharedData, &runningRender };
                     
                     snake1Data.runningMovement = &runningMovement;
-                    //Se crean hilos para el movimiento de las serpientes y reescritura del escenario
+
                     FoodThreadData foodData = { &food, &snake1, nullptr, &sharedData, &runningMovement };
                     CollisionThreadData collisionData = { &snake1, nullptr, &sharedData, &runningMovement, &gameOver };
 
@@ -115,31 +134,26 @@ int main() {
                     pthread_create(&collisionThread, nullptr, collisionThreadFunction, &collisionData);
                     pthread_create(&renderThread, nullptr, renderThreadFunction, &renderData);
 
-                    // Bucle de control de pantalla (para ESC y Game Over)
                     bool escPressed = false;
                     while(screen == 1 && !gameOver) {
                         {
                             std::lock_guard<std::mutex> lock(sharedData.mtx);
                             if(sharedData.keyPlayer1 == InputHandler::KEY_ESC) {
                                 escPressed = true;
-                                // Limpiar ESC para que no interfiera
                                 sharedData.keyPlayer1 = InputHandler::KEY_NONE;
                             }
                         }
                         usleep(16000);
                     }
                     if(escPressed) screen = 0;
-                    // Mostrar pantalla Game Over si hubo colisión
                     runningMovement = false;
                     runningRender = false;
 
-                    // Esperar a que terminen los hilos antes de mostrar Game Over
                     pthread_join(snake1Thread, nullptr);
                     pthread_join(foodThread, nullptr);
                     pthread_join(collisionThread, nullptr);
                     pthread_join(renderThread, nullptr);
 
-                    // Ahora sí mostrar Game Over
                     if(gameOver) {
                         GAME::renderGameOver(snake1, nullptr);
                         sleep(5);
@@ -149,13 +163,12 @@ int main() {
                 else if (screen == 2) {
                     sharedData.getKey();
                     sharedData.getKey2();
-                    //Se crean las serpientes con una coordenada inicial
                     Snake snake1(10,8);
                     Snake snake2(10,16);
                     Food food;
-                    //Se almacenan los parametros par alos hilos de movimiento 
-                    ThreadData snake1Data = { &snake1, &sharedData, 1 };
-                    ThreadData snake2Data = { &snake2, &sharedData, 2 };
+
+                    ThreadData snake1Data = { &snake1, &sharedData, 1, nullptr, velocidad };
+                    ThreadData snake2Data = { &snake2, &sharedData, 2, nullptr, velocidad };
                     bool runningMovement = true;
                     bool runningRender = true;
                     bool gameOver = false;
@@ -164,7 +177,7 @@ int main() {
                     
                     snake1Data.runningMovement = &runningMovement;
                     snake2Data.runningMovement = &runningMovement;
-                    //Se crean hilos para el movimiento de las serpientes y reescritura del escenario
+
                     FoodThreadData foodData = { &food, &snake1, &snake2, &sharedData, &runningMovement };
                     CollisionThreadData collisionData = { &snake1, &snake2, &sharedData, &runningMovement, &gameOver };
 
@@ -176,7 +189,6 @@ int main() {
                     pthread_create(&collisionThread, nullptr, collisionThreadFunction, &collisionData);
                     pthread_create(&renderThread, nullptr, renderThreadFunction, &renderData);
 
-                    // Bucle de control de pantalla (para ESC y Game Over)
                     bool escPressed = false;
                     while(screen == 2 && !gameOver) {
                         {
@@ -184,7 +196,6 @@ int main() {
                             if(sharedData.keyPlayer1 == InputHandler::KEY_ESC || 
                                sharedData.keyPlayer2 == InputHandler::KEY_ESC) {
                                 escPressed = true;
-                                // Limpiar ESC para que no interfiera
                                 sharedData.keyPlayer1 = InputHandler::KEY_NONE;
                                 sharedData.keyPlayer2 = InputHandler::KEY_NONE;
                             }
@@ -192,18 +203,15 @@ int main() {
                         usleep(16000);
                     }
                     if(escPressed) screen = 0;
-                    // Mostrar pantalla Game Over si hubo colisión
                     runningMovement = false;
                     runningRender = false;
 
-                    // Esperar a que terminen los hilos antes de mostrar Game Over
                     pthread_join(snake1Thread, nullptr);
                     pthread_join(snake2Thread, nullptr);
                     pthread_join(foodThread, nullptr);
                     pthread_join(collisionThread, nullptr);
                     pthread_join(renderThread, nullptr);
 
-                    // Ahora sí mostrar Game Over
                     if(gameOver) {
                         GAME::renderGameOver(snake1, &snake2);
                         sleep(5);
@@ -217,11 +225,10 @@ int main() {
                 }
             }
             else {
-                // Subpantallas
                 if (key == InputHandler::KEY_ESC) {
                     screen = 0;
                     system("clear");
-                    ASCIIArt::drawMainMenu(selectedOption);
+                    ASCIIArt::drawMainMenu(selectedOption, speedIndex);
                 }
             }
         }

@@ -6,8 +6,8 @@
 
 
 namespace ASCIIArt {
-    
-    void drawMainMenu(int selectedOption) {
+
+    void drawMainMenu(int selectedOption, int speedIndex) {
         WindowsConsole::clearScreen();
         WindowsConsole::hideCursor();
         WindowsConsole::setConsoleTitle("Snake Game - Menu Principal");
@@ -29,12 +29,16 @@ namespace ASCIIArt {
 
         printCenteredLine(topFrame);
 
+        std::string speedLabel = (speedIndex == 0) ? "Lento " : (speedIndex == 1) ? "Medio " : "Rápido";
+        std::string speedText = "Velocidad: " + speedLabel;
+
         std::vector<std::string> options = {
             (selectedOption == 0 ? "        ║      ➤  Jugar (1 jugador)        ║" : "       ║         Jugar (1 jugador)        ║"),
             (selectedOption == 1 ? "        ║     ➤  Jugar (2 jugadores)       ║" : "       ║        Jugar (2 jugadores)       ║"),
             (selectedOption == 2 ? "        ║        ➤  Instrucciones          ║" : "       ║           Instrucciones          ║"),
             (selectedOption == 3 ? "        ║          ➤  Puntajes             ║" : "       ║             Puntajes             ║"),
-            (selectedOption == 4 ? "        ║           ➤  Salir               ║" : "       ║              Salir               ║")
+            (selectedOption == 4 ? "         ║      ➤  "+ speedText +"        ║" : "       ║        " + speedText+"         ║"),
+            (selectedOption == 5 ? "        ║           ➤  Salir               ║" : "       ║              Salir               ║")
         };
 
         for (const auto& option : options) {

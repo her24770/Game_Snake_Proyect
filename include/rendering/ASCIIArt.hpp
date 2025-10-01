@@ -11,7 +11,7 @@ namespace ASCIIArt {
     const int CONSOLE_HEIGHT = 25;
     
     // Funciones principales de renderizado
-    void drawMainMenu(int selectedOption = 0);
+    void drawMainMenu(int selectedOption = 0, int speedIndex = 0);
     void drawGameTitle();
     void drawMenuBorder();
     void drawMenuOptions();
