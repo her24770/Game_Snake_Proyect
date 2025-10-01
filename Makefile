@@ -24,6 +24,7 @@ SOURCES = $(SRC_DIR)/main.cpp \
           $(SRC_DIR)/threads/RenderThread.cpp \
           $(SRC_DIR)/threads/FoodThread.cpp \
           $(SRC_DIR)/threads/CollisionThread.cpp \
+		  $(SRC_DIR)/threads/AudioThread.cpp \
           $(SRC_DIR)/rendering/Game.cpp	  
 
 # Archivos objeto
