@@ -9,6 +9,7 @@
 #include "../include/core/Food.hpp"
 #include "../include/threads/FoodThread.hpp"
 #include "../include/threads/CollisionThread.hpp"
+#include "../include/threads/AudioThread.hpp"
 #include <iostream>
 #include <pthread.h>
 #include <unistd.h>
@@ -19,10 +20,20 @@ int main() {
     SharedGameData sharedData;
     pthread_t inputThread;
     pthread_create(&inputThread, nullptr, inputThreadFunction, &sharedData);
+
+    //Audio
+    AudioThreadData audioData;
+    audioData.currentTrack.store(AUDIO_MENU);
+    audioData.running.store(true);
+    audioData.shouldChange.store(false);
+
+    pthread_t audioThread;
+    pthread_create(&audioThread, nullptr, audioThreadFunction, &audioData);
     
     const int MENU_OPCIONES = 5;
     int selectedOption = 0;
     int screen = 0;
+    int lastScreen = -1;
 
     
     // Preparar datos para hilos de movimiento
@@ -44,6 +55,17 @@ int main() {
         int key2 = sharedData.getKey2();
         
         int key = (key1 != InputHandler::KEY_NONE) ? key1 : key2; // Prioriza key1 si existe
+        // Cambiar audio según pantalla
+        if(screen != lastScreen) {
+            switch(screen) {
+                case 0: audioData.currentTrack.store(AUDIO_MENU); break;
+                case 1: audioData.currentTrack.store(AUDIO_GAME); break;
+                case 2: audioData.currentTrack.store(AUDIO_INSTRUCTIONS); break;
+                case 3: audioData.currentTrack.store(AUDIO_SCOREBOARD); break;
+            }
+            audioData.shouldChange.store(true);
+            lastScreen = screen;
+        }
         
         if(key != InputHandler::KEY_NONE) {
             std::cout << "[MAIN] Tecla recibida: " << key << std::endl;
@@ -207,7 +229,11 @@ int main() {
     }
     
     sharedData.stop();
+    audioData.running.store(false);
+
     pthread_join(inputThread, nullptr);
+    pthread_join(audioThread, nullptr);
+
     system("stty icanon echo");
     
     return 0;
