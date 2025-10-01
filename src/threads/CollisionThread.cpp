@@ -1,5 +1,6 @@
 #include "../../include/threads/CollisionThread.hpp"
 #include "../../include/rendering/Game.hpp"
+#include "../../include/threads/AudioThread.hpp"
 #include <unistd.h>
 #include <mutex>
 
@@ -69,8 +70,13 @@ void* collisionThreadFunction(void* arg) {
             std::lock_guard<std::mutex> lock(data->sharedData->mtx);
             *(data->gameOver) = true;
             *(data->running) = false;
-        }
         
+            if (data->audioData){
+                std::lock_guard<std::mutex> audioLock(*(data->audioData->queueMutex));
+                data-> audioData->soundQueue-> push("audio/Comer-1-1.mp3");
+                data-> audioData -> queueCondition-> notify_one();
+            }
+        }
         usleep(50000);
     }
     

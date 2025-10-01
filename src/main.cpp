@@ -9,9 +9,12 @@
 #include "../include/core/Food.hpp"
 #include "../include/threads/FoodThread.hpp"
 #include "../include/threads/CollisionThread.hpp"
+#include "../include/threads/AudioThread.hpp"
 #include <iostream>
 #include <pthread.h>
 #include <unistd.h>
+#include <queue>
+#include <mutex>
 
 int main() {
     system("stty -icanon -echo");
@@ -32,7 +35,20 @@ int main() {
         bool* runningMovement;
     };
     
+    std::queue<std::string> soundQueue;
+    std::mutex audioMutex;
+    std::condition_variable audioCondition;
+    bool runningAudio = true;
     
+    AudioThreadData audioData = {
+        &runningAudio,
+        &soundQueue,
+        &audioMutex,
+        &audioCondition
+    };
+    
+    pthread_t audioThread;
+    pthread_create(&audioThread, nullptr, audioThreadFunction, &audioData);
     
     // Dibujar menú inicial
     system("clear");
@@ -86,7 +102,7 @@ int main() {
                     snake2Data.runningMovement = &runningMovement;
                     //Se crean hilos para el movimiento de las serpientes y reescritura del escenario
                     FoodThreadData foodData = { &food, &snake1, &snake2, &sharedData, &runningMovement };
-                    CollisionThreadData collisionData = { &snake1, &snake2, &sharedData, &runningMovement, &gameOver };
+                    CollisionThreadData collisionData = { &snake1, &snake2, &sharedData, &runningMovement, &gameOver, &audioData };
 
                     pthread_t renderThread, snake1Thread, snake2Thread, foodThread, collisionThread;
 

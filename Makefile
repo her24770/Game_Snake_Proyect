@@ -24,7 +24,11 @@ SOURCES = $(SRC_DIR)/main.cpp \
           $(SRC_DIR)/threads/RenderThread.cpp \
           $(SRC_DIR)/threads/FoodThread.cpp \
           $(SRC_DIR)/threads/CollisionThread.cpp \
+		  $(SRC_DIR)/threads/AudioThread.cpp \
           $(SRC_DIR)/rendering/Game.cpp	  
+		  
+#Flags audio
+CXXFLAGS = -std=c++17 -Wall -Wextra -O2 -pthread -Wno-unused-result
 
 # Archivos objeto
 OBJECTS = $(SOURCES:$(SRC_DIR)/%.cpp=$(OBJ_DIR)/%.o)
