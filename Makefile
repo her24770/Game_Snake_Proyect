@@ -16,14 +16,15 @@ SOURCES = $(SRC_DIR)/main.cpp \
           $(SRC_DIR)/utils/WindowsConsole.cpp \
           $(SRC_DIR)/utils/InputHandler.cpp \
           $(SRC_DIR)/rendering/ASCIIArt.cpp \
-		  $(SRC_DIR)/rendering/Game.cpp \
           $(SRC_DIR)/core/ThreadSharedData.cpp \
           $(SRC_DIR)/core/Snake.cpp \
+          $(SRC_DIR)/core/Food.cpp \
           $(SRC_DIR)/threads/InputThread.cpp \
-		  $(SRC_DIR)/threads/MovementThread.cpp \
-		  $(SRC_DIR)/threads/RenderThread.cpp \
-		  $(SRC_DIR)/core/Food.cpp \
-		  $(SRC_DIR)/threads/FoodThread.cpp
+          $(SRC_DIR)/threads/MovementThread.cpp \
+          $(SRC_DIR)/threads/RenderThread.cpp \
+          $(SRC_DIR)/threads/FoodThread.cpp \
+          $(SRC_DIR)/threads/CollisionThread.cpp \
+          $(SRC_DIR)/rendering/Game.cpp	  
 
 # Archivos objeto
 OBJECTS = $(SOURCES:$(SRC_DIR)/%.cpp=$(OBJ_DIR)/%.o)

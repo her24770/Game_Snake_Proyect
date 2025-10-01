@@ -68,3 +68,63 @@ namespace GAME {
         std::cout << "\nESC para volver\n";
     }
 }
+
+
+
+void GAME::renderGameOver(const Snake& snake1, const Snake& snake2) {
+    using namespace GAME;
+    std::vector<std::vector<std::string>> pantalla(GAME::CONSOLE_HEIGHT, std::vector<std::string>(GAME::CONSOLE_WIDTH, " "));
+    // Dibujar bordes
+    for (int x = 0; x < CONSOLE_WIDTH; ++x) {
+        pantalla[0][x] = pantalla[CONSOLE_HEIGHT-1][x] = "▓";
+    }
+    for (int y = 0; y < CONSOLE_HEIGHT; ++y) {
+        pantalla[y][0] = pantalla[y][CONSOLE_WIDTH-1] = "▓";
+    }
+
+    // Mensaje GAME OVER centrado
+    std::vector<std::string> gameOverText = {
+        " ██████╗  █████╗ ███╗   ███╗███████╗",
+        "██╔════╝ ██╔══██╗████╗ ████║██╔════╝",
+        "██║  ███╗███████║██╔████╔██║█████╗  ",
+        "██║   ██║██╔══██║██║╚██╔╝██║██╔══╝  ",
+        "╚██████╔╝██║  ██║██║ ╚═╝ ██║███████╗",
+        " ╚═════╝ ╚═╝  ╚═╝╚═╝     ╚═╝╚══════╝",
+        "",
+        " ██████╗ ██╗   ██╗███████╗██████╗ ",
+        "██╔═══██╗██║   ██║██╔════╝██╔══██╗",
+        "██║   ██║██║   ██║█████╗  ██████╔╝",
+        "██║   ██║╚██╗ ██╔╝██╔══╝  ██╔══██╗",
+        "╚██████╔╝ ╚████╔╝ ███████╗██║  ██║",
+        " ╚═════╝   ╚═══╝  ╚══════╝╚═╝  ╚═╝"
+    };
+
+    int startY = (CONSOLE_HEIGHT - gameOverText.size()) / 2;
+    for(size_t i = 0; i < gameOverText.size(); ++i) {
+        int startX = (CONSOLE_WIDTH - gameOverText[i].length()) / 2;
+        for(size_t j = 0; j < gameOverText[i].length(); ++j) {
+            if(startX + j > 0 && startX + j < GAME::CONSOLE_WIDTH-1 &&
+                startY + i > 0 && startY + i < GAME::CONSOLE_HEIGHT-1) {
+                pantalla[startY + i][startX + j] = std::string(1, gameOverText[i][j]);
+            }
+        }
+    }
+
+    // Renderizar pantalla
+    WindowsConsole::clearScreen();
+    WindowsConsole::hideCursor();
+    
+    for(const auto& fila : pantalla){
+        for(const auto& celda : fila){
+            if(celda == "▓") std::cout << WindowsConsole::Colors::BRIGHT_GREEN;
+            else std::cout << WindowsConsole::Colors::BRIGHT_RED;
+            std::cout << celda;
+        }
+        std::cout << std::endl;
+    }
+
+    std::cout << WindowsConsole::Colors::BRIGHT_WHITE
+              << "\nPuntaje Final Jugador 1: " << snake1.getPuntuacion()
+              << "\nPuntaje Final Jugador 2: " << snake2.getPuntuacion()
+              << WindowsConsole::Colors::RESET << std::endl;
+}
