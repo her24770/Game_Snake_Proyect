@@ -8,24 +8,36 @@ namespace InputHandler {
     int getUserInput() {
         char c = getchar();
         
+        // Primero verificar teclas simples (WASD)
+        if(c == 'w' || c == 'W') return KEY_W;
+        if(c == 'a' || c == 'A') return KEY_A;
+        if(c == 's' || c == 'S') return KEY_S;
+        if(c == 'd' || c == 'D') return KEY_D;
+        if(c == '\n' || c == '\r') return KEY_ENTER;
+        
+        // Luego manejar secuencias de escape (flechas)
         if (c == 27) {
-            char next = getchar();
-            if (next == '[') {
-                c = getchar();
-                if (c == 'A') return KEY_UP;
-                if (c == 'B') return KEY_DOWN;
-                if (c == 'C') return KEY_RIGHT;
-                if (c == 'D') return KEY_LEFT;
+            // Hacer lectura no bloqueante para el siguiente carácter
+            fd_set readfds;
+            struct timeval timeout;
+            FD_ZERO(&readfds);
+            FD_SET(STDIN_FILENO, &readfds);
+            timeout.tv_sec = 0;
+            timeout.tv_usec = 1000; // 1ms
+            
+            if(select(STDIN_FILENO + 1, &readfds, NULL, NULL, &timeout) > 0) {
+                char next = getchar();
+                if (next == '[') {
+                    c = getchar();
+                    if (c == 'A') return KEY_UP;
+                    if (c == 'B') return KEY_DOWN;
+                    if (c == 'C') return KEY_RIGHT;
+                    if (c == 'D') return KEY_LEFT;
+                }
             }
             return KEY_ESC;
         }
         
-        if (c == '\n' || c == '\r') return KEY_ENTER;
-
-        if (c == 'w' || c == 'W') return KEY_W;
-        if (c == 'a' || c == 'A') return KEY_A;
-        if (c == 's' || c == 'S') return KEY_S;
-        if (c == 'd' || c == 'D') return KEY_D;
         return KEY_NONE;
     }
 

@@ -6,6 +6,9 @@
 #include "../include/threads/InputThread.hpp"
 #include "../include/threads/MovementThread.hpp"
 #include "../include/threads/RenderThread.hpp"
+#include "../include/core/Food.hpp"
+#include "../include/threads/FoodThread.hpp"
+#include "../include/threads/CollisionThread.hpp"
 #include <iostream>
 #include <pthread.h>
 #include <unistd.h>
@@ -67,35 +70,54 @@ int main() {
                     //Se crean las serpientes con una coordenada inicial
                     Snake snake1(10,8);
                     Snake snake2(10,16);
+                    Food food;
                     //Se almacenan los parametros par alos hilos de movimiento 
                     ThreadData snake1Data = { &snake1, &sharedData, 1 };
                     ThreadData snake2Data = { &snake2, &sharedData, 2 };
                     bool runningMovement = true;
                     bool runningRender = true;
+                    bool gameOver = false;
                     
-                    RenderThreadData renderData = { &snake1, &snake2, &sharedData, &runningRender };
+                    RenderThreadData renderData = { &snake1, &snake2, &food, &sharedData, &runningRender };
                     
                     snake1Data.runningMovement = &runningMovement;
                     snake2Data.runningMovement = &runningMovement;
                     //Se crean hilos para el movimiento de las serpientes y reescritura del escenario
-                    pthread_t renderThread, snake1Thread, snake2Thread;
+                    FoodThreadData foodData = { &food, &snake1, &snake2, &sharedData, &runningMovement };
+                    CollisionThreadData collisionData = { &snake1, &snake2, &sharedData, &runningMovement, &gameOver };
+
+                    pthread_t renderThread, snake1Thread, snake2Thread, foodThread, collisionThread;
+
                     pthread_create(&snake1Thread, nullptr, snakeMovementThread, &snake1Data);
                     pthread_create(&snake2Thread, nullptr, snakeMovementThread, &snake2Data);
+                    pthread_create(&foodThread, nullptr, foodThreadFunction, &foodData);
+                    pthread_create(&collisionThread, nullptr, collisionThreadFunction, &collisionData);
                     pthread_create(&renderThread, nullptr, renderThreadFunction, &renderData);
 
-                    // Bucle de control de pantalla (para ESC)
-                    while(screen == 1) {
+                    // Bucle de control de pantalla (para ESC y Game Over)
+                    while(screen == 1 && !gameOver) {
                         int key = sharedData.getKey();
                         if(key == InputHandler::KEY_ESC) screen = 0;
                         usleep(16000);
                     }
 
+                    // Mostrar pantalla Game Over si hubo colisión
                     runningMovement = false;
                     runningRender = false;
-                    //Se finalizan los hilos para no gastar recursos
+
+                    // Esperar a que terminen los hilos antes de mostrar Game Over
                     pthread_join(snake1Thread, nullptr);
                     pthread_join(snake2Thread, nullptr);
+                    pthread_join(foodThread, nullptr);
+                    pthread_join(collisionThread, nullptr);
                     pthread_join(renderThread, nullptr);
+
+                    // Ahora sí mostrar Game Over
+                    if(gameOver) {
+                        GAME::renderGameOver(snake1, snake2);
+                        sleep(5);
+                        screen = 0;
+                    }
                 } else if (screen == 2) {
                     ASCIIArt::drawInstructions();
                 } else if (screen == 3) {
