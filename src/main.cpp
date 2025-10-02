@@ -12,6 +12,7 @@
 #include "../include/threads/CollisionThread.hpp"
 #include "../include/threads/AudioThread.hpp"
 #include "../include/threads/SFXThread.hpp"
+#include "../include/threads/ScoreThread.hpp"
 #include <iostream>
 #include <pthread.h>
 #include <unistd.h>
@@ -46,6 +47,14 @@ int main() {
 
     pthread_t timerThread;
     pthread_create(&timerThread, nullptr, timerThreadFunction, &timerData);
+
+    //Puntajes
+    ScoreThreadData scoreData;
+    scoreData.running.store(true);
+    scoreData.needsUpdate.store(false);
+
+    pthread_t scoreThread;
+    pthread_create(&scoreThread, nullptr, scoreThreadFunction, &scoreData);
     
     const int MENU_OPCIONES = 6;
     const int SPEED_OPTION = 4; 
@@ -248,7 +257,7 @@ int main() {
                 else if (screen == 3) {
                     ASCIIArt::drawInstructions();
                 } else if (screen == 4) {
-                    ASCIIArt::drawScoreboard();
+                    ASCIIArt::drawScoreboard(&scoreData);
                 }
             }
             else {
@@ -266,6 +275,7 @@ int main() {
     audioData.running.store(false);
     sfxData.running.store(false);
     timerData.running.store(false);
+    scoreData.running.store(false);
 
 
 
@@ -273,6 +283,7 @@ int main() {
     pthread_join(audioThread, nullptr);
     pthread_join(sfxThread, nullptr);
     pthread_join(timerThread, nullptr);
+    pthread_join(scoreThread, nullptr);
 
 
     system("stty icanon echo");

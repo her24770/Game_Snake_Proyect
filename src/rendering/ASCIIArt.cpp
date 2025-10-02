@@ -99,11 +99,11 @@ void drawScoreboardTitle(){
         std::vector<std::string> title = {
             "               ",
             "               ",
-            "▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄",
-            "█ ▄▄▄ ██ ▄▄▀██ ▄▄▄ ██ ▄▄▀██ ▄▄▄██ ▄▄▄▀██ ▄▄▄ █▀▄▄▀██ ▄▄▀██ ▄▄▀██",               
-            "█▄▄▄▀▀██ █████ ███ ██ ▀▀▄██ ▄▄▄██ ▄▄▀▀██ ███ █ ▀▀ ██ ▀▀▄██ ███ █",
-            "█ ▀▀▀ ██ ▀▀▄██ ▀▀▀ ██ ██ ██ ▀▀▀██ ▀▀▀ ██ ▀▀▀ █ ██ ██ ██ ██ ▀▀▄██",
-            "▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀"         
+            "   ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄",
+            "   █ ▄▄▄ ██ ▄▄▀██ ▄▄▄ ██ ▄▄▀██ ▄▄▄██ ▄▄▄▀██ ▄▄▄ █▀▄▄▀██ ▄▄▀██ ▄▄▀██",               
+            "   █▄▄▄▀▀██ █████ ███ ██ ▀▀▄██ ▄▄▄██ ▄▄▀▀██ ███ █ ▀▀ ██ ▀▀▄██ ███ █",
+            "   █ ▀▀▀ ██ ▀▀▄██ ▀▀▀ ██ ██ ██ ▀▀▀██ ▀▀▀ ██ ▀▀▀ █ ██ ██ ██ ██ ▀▀▄██",
+            "   ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀"         
         };
         
         for (const auto& line : title) {
@@ -112,32 +112,25 @@ void drawScoreboardTitle(){
         
         std::cout << WindowsConsole::Colors::RESET << std::endl;
     }
-void drawScoreboard() {
-    system("clear");
-    std::cout << "\n\n=== PUNTAJES ===\n\nESC para volver\n";  
+
+void drawScoreboard(ScoreThreadData* scoreData) {
     WindowsConsole::clearScreen();
     WindowsConsole::hideCursor();
     WindowsConsole::setConsoleTitle("Snake Game - Puntajes");
     std::cout << std::endl;
-    //Borde superior
-    drawMenuBorder();
 
-    //Título de scoreboard
+    drawMenuBorder();
     drawScoreboardTitle();
+
     std::cout << WindowsConsole::Colors::BRIGHT_WHITE;
 
-    //Puntajes de ejemplo
-    std::vector<std::pair<std::string, int>> scores = {
-        {"Cristi", 150},
-        {"Wong", 120},
-        {"Strange", 100},
-        {"Ancestral", 80},
-        {"Dormamu", 60}
-    };
-    // Medallas para los 3 primeros puestos
-    std::vector<std::string> medals = { "★", "☆", "✦", "  ", "  " };
+    std::vector<ScoreEntry> scores;
+    if (scoreData) {
+        std::lock_guard<std::mutex> lock(scoreData->scoreMutex);
+        scores = scoreData->scores;
+    }
 
-    // Trofeo en ASCII
+    // Trofeo ASCII
     std::vector<std::string> trophy = {
         "       ___________   ",
         "      '._==_==_=_.'  ",
@@ -149,60 +142,63 @@ void drawScoreboard() {
         "           ) (       ",
         "         _.' '._     ",
         "        `\"\"\"\"\"\"\"`    "
-};
-    //  Calcular el ancho máximo del nombre del jugador
-    size_t maxNameLength = 0;
-    for (const auto& score : scores) {
-        if (score.first.length() > maxNameLength) {
-            maxNameLength = score.first.length();
+    };
+
+    // Tabla de puntajes
+    std::vector<std::string> tableLines;
+    tableLines.push_back("╔════╦══════════════════╦═══════╦═════════╗");
+    tableLines.push_back("║ #  ║ JUGADOR          ║ PUNTOS║ TIEMPO  ║");
+    tableLines.push_back(" ╠════╬══════════════════╬═══════╬═════════╣");
+
+    for (size_t i = 0; i < 10; ++i) {
+        std::ostringstream line;
+        line << "║ ";
+
+        if (i < scores.size()) {
+            line << std::setw(2) << std::right << (i + 1) << " ║ "
+                 << std::setw(16) << std::left << scores[i].name.substr(0, 16) << " ║ "
+                 << std::setw(5) << std::right << scores[i].score << " ║ "
+                 << std::setw(7) << std::left << scores[i].time << " ║";
+        } else {
+            line << "   ║                  ║       ║         ║";
         }
+
+        tableLines.push_back(line.str());
     }
 
-    //  Construir líneas del scoreboard (header + puntajes)
-    std::vector<std::string> scoreboardLines;
+    tableLines.push_back("╚════╩══════════════════╩═══════╩═════════╝");
 
-    std::ostringstream headerStream;
-    headerStream << std::setw(8) << std::left << "RANK"
-                 << " | " << std::setw(maxNameLength) << std::left << "PLAYER"
-                 << " | " << std::setw(5) << std::right << "SCORE";
-    scoreboardLines.push_back(headerStream.str());
-    scoreboardLines.push_back(std::string(headerStream.str().length(), '─'));
-
-    for (size_t i = 0; i < scores.size(); ++i) {
-        std::ostringstream lineStream;
-        lineStream << std::setw(8) << std::left << std::to_string(i + 1)
-                   << " | " << std::setw(maxNameLength) << std::left << scores[i].first
-                   << " | " << std::setw(5) << std::right << scores[i].second;
-        scoreboardLines.push_back(lineStream.str());
-    }
-
-    //  Alineación vertical
-    size_t maxLines = std::max(trophy.size(), scoreboardLines.size());
+    // Alineación
+    size_t maxLines = std::max(trophy.size(), tableLines.size());
     while (trophy.size() < maxLines)
-        trophy.insert(trophy.begin(), std::string(trophy[0].length(), ' '));
-    while (scoreboardLines.size() < maxLines)
-        scoreboardLines.push_back("");
+        trophy.push_back(std::string(trophy[0].length(), ' '));
+    while (tableLines.size() < maxLines)
+        tableLines.push_back("");
 
-    //  Cálculo para alinear todo horizontalmente en el centro
-    int trophyWidth = trophy[0].length();
-    int scoreboardWidth = headerStream.str().length();
-    int spaceBetween = 6;
-    int contentWidth = trophyWidth + spaceBetween + scoreboardWidth;
+    int trophyWidth = 21;
+    int tableWidth = 46;
+    int spaceBetween = 4;
+    int contentWidth = trophyWidth + spaceBetween + tableWidth;
     int leftPadding = (CONSOLE_WIDTH - contentWidth) / 2;
 
-    //  Imprimir trofeo + tabla
     for (size_t i = 0; i < maxLines; ++i) {
         std::cout << std::string(leftPadding, ' ')
                   << trophy[i]
                   << std::string(spaceBetween, ' ')
-                  << scoreboardLines[i]
+                  << tableLines[i]
                   << std::endl;
     }
-    //Borde inferior
-    drawMenuBorder();
 
+    drawMenuBorder();
+    std::cout << WindowsConsole::Colors::RESET;
     std::cout << "\n\nESC para volver\n";
 }
+
+
+
+
+
+
 void drawMenuBorder() {
         std::cout << WindowsConsole::Colors::BRIGHT_CYAN;
         std::string border = "╔" + std::string(CONSOLE_WIDTH - 2, '═') + "╗";
