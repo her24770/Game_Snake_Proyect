@@ -81,3 +81,23 @@ void* scoreThreadFunction(void* arg) {
     
     return nullptr;
 }
+
+int getLowestTopScore(ScoreThreadData* data) {
+    std::lock_guard<std::mutex> lock(data->scoreMutex);
+    if(data->scores.empty()) return 0;
+    return data->scores.back().score;
+}
+void addScoreImmediate(ScoreThreadData* data, const std::string& name, int score, const std::string& time) {
+    std::lock_guard<std::mutex> lock(data->scoreMutex);
+    data->scores.push_back({name, score, time});
+
+    std::sort(data->scores.begin(), data->scores.end(),
+              [](const ScoreEntry& a, const ScoreEntry& b) {
+                  return a.score > b.score;
+              });
+
+    if(data->scores.size() > 10)
+        data->scores.resize(10);
+    saveScoresToCSV(data->scores);
+    data->needsUpdate.store(true);
+}

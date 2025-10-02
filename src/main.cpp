@@ -13,6 +13,7 @@
 #include "../include/threads/AudioThread.hpp"
 #include "../include/threads/SFXThread.hpp"
 #include "../include/threads/ScoreThread.hpp"
+#include "../include/threads/ScoreThreads.hpp"
 #include <iostream>
 #include <pthread.h>
 #include <unistd.h>
@@ -187,6 +188,26 @@ int main() {
                         timerData.counting.store(false);
                         int finalTime = timerData.totalSeconds.load();
                         GAME::renderGameOver(snake1, snake1, finalTime);
+                        int lowestTop = getLowestTopScore(&scoreData);
+                        if(snake1.getPuntuacion() > lowestTop){
+                            std::string nombre;
+                            std::cout << "Nueva puntuacion alta, ingrese el nombre: ";
+                            std::cin >> nombre;
+
+                            // Convertir segundos a mm:ss
+                            int segundos = finalTime;
+                            int minutos = segundos / 60;
+                            segundos = segundos % 60;
+                            char tiempoStr[6];
+                            snprintf(tiempoStr, sizeof(tiempoStr), "%02d:%02d", minutos, segundos);
+
+                            // Crear datos para el hilo
+                            ScoreThreadsData* scoreData = new ScoreThreadsData{nombre, snake1.getPuntuacion(), tiempoStr, "assets/scores.csv"};
+
+                            pthread_t scoreThread;
+                            pthread_create(&scoreThread, nullptr, writeScoreThread, scoreData);
+                            pthread_detach(scoreThread); // No bloquea el main
+                        }
                         sleep(5);
                         screen = 0;
                     }
@@ -250,6 +271,45 @@ int main() {
                         timerData.counting.store(false);
                         int finalTime = timerData.totalSeconds.load();
                         GAME::renderGameOver(snake1, snake2, finalTime);
+                        int lowestTop = getLowestTopScore(&scoreData);
+                        if(snake1.getPuntuacion() > lowestTop){
+                            std::string nombre;
+                            std::cout << "Nueva puntuacion alta para el jugador 1, ingrese el nombre: ";
+                            std::cin >> nombre;
+
+                            // Convertir segundos a mm:ss
+                            int segundos = finalTime;
+                            int minutos = segundos / 60;
+                            segundos = segundos % 60;
+                            char tiempoStr[6];
+                            snprintf(tiempoStr, sizeof(tiempoStr), "%02d:%02d", minutos, segundos);
+
+                            // Crear datos para el hilo
+                            ScoreThreadsData* scoreData = new ScoreThreadsData{nombre, snake1.getPuntuacion(), tiempoStr, "assets/scores.csv"};
+
+                            pthread_t scoreThread;
+                            pthread_create(&scoreThread, nullptr, writeScoreThread, scoreData);
+                            pthread_detach(scoreThread); // No bloquea el main
+                        }
+                        if(snake2.getPuntuacion() > lowestTop){
+                            std::string nombre;
+                            std::cout << "Nueva puntuacion alta para el jugador 2, ingrese el nombre: ";
+                            std::cin >> nombre;
+
+                            // Convertir segundos a mm:ss
+                            int segundos = finalTime;
+                            int minutos = segundos / 60;
+                            segundos = segundos % 60;
+                            char tiempoStr[6];
+                            snprintf(tiempoStr, sizeof(tiempoStr), "%02d:%02d", minutos, segundos);
+
+                            // Crear datos para el hilo
+                            ScoreThreadsData* scoreData = new ScoreThreadsData{nombre, snake2.getPuntuacion(), tiempoStr, "assets/scores.csv"};
+
+                            pthread_t scoreThread;
+                            pthread_create(&scoreThread, nullptr, writeScoreThread, scoreData);
+                            pthread_detach(scoreThread); // No bloquea el main
+                        }
                         sleep(5);
                         screen = 0;
                     }

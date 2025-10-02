@@ -21,5 +21,7 @@ struct ScoreThreadData {
 
 void* scoreThreadFunction(void* arg);
 void saveScore(ScoreThreadData* data, const std::string& name, int score, const std::string& time);
+int getLowestTopScore(ScoreThreadData* data);
+void addScoreImmediate(ScoreThreadData* data, const std::string& name, int score, const std::string& time);
 
 #endif

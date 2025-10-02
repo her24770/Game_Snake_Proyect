@@ -150,20 +150,26 @@ void drawScoreboard(ScoreThreadData* scoreData) {
     tableLines.push_back("║ #  ║ JUGADOR          ║ PUNTOS║ TIEMPO  ║");
     tableLines.push_back(" ╠════╬══════════════════╬═══════╬═════════╣");
 
-    for (size_t i = 0; i < 10; ++i) {
-        std::ostringstream line;
-        line << "║ ";
-
-        if (i < scores.size()) {
-            line << std::setw(2) << std::right << (i + 1) << " ║ "
-                 << std::setw(16) << std::left << scores[i].name.substr(0, 16) << " ║ "
-                 << std::setw(5) << std::right << scores[i].score << " ║ "
-                 << std::setw(7) << std::left << scores[i].time << " ║";
-        } else {
-            line << "   ║                  ║       ║         ║";
+    auto formatCell = [](const std::string& text, int width, bool leftAlign=true) {
+        std::string t = text.substr(0, width);
+        if (t.length() < width) {
+            if (leftAlign) t += std::string(width - t.length(), ' ');
+            else t = std::string(width - t.length(), ' ') + t;
         }
+        return t;
+    };
 
-        tableLines.push_back(line.str());
+    for (size_t i = 0; i < 10; ++i) {
+        std::string line = "║ ";
+        if (i < scores.size()) {
+            line += formatCell(std::to_string(i+1), 2, false) + " ║ ";
+            line += formatCell(scores[i].name, 16, true) + " ║ ";
+            line += formatCell(std::to_string(scores[i].score), 5, false) + " ║ ";
+            line += formatCell(scores[i].time, 7, true) + " ║";
+        } else {
+            line += "   ║                  ║       ║         ║";
+        }
+        tableLines.push_back(line);
     }
 
     tableLines.push_back("╚════╩══════════════════╩═══════╩═════════╝");
