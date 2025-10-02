@@ -26,7 +26,6 @@ void playSoundEffect(SFXData* data, SoundEffect sfx) {
 void* sfxThreadFunction(void* arg) {
     SFXData* data = (SFXData*)arg;
     nice(-10);
-    std::cout << "[SFX THREAD] Iniciado - esperando colisiones...\n";
     
     while(data->running.load()) {
         SoundEffect sfx = SFX_NONE;
@@ -43,19 +42,15 @@ void* sfxThreadFunction(void* arg) {
         if(sfx != SFX_NONE) {
             switch(sfx) {
                 case SFX_WALL_COLLISION:
-                    std::cout << "[SFX] Colision con muro\n";
                     playSFX("assets/efectos/ColisionMuro.mp3", 100);
                     break;
                 case SFX_SELF_COLLISION:
-                    std::cout << "[SFX] Colision con ella misma\n";
                     playSFX("assets/efectos/ColisionEllamisma.mp3", 100);
                     break;
                 case SFX_SNAKE_COLLISION:
-                    std::cout << "[SFX] Colision entre las serpientes\n";
                     playSFX("assets/efectos/ColisionEntre2.mp3", 100);
                     break;
                 case SFX_EAT_FOOD:
-                    std::cout << "[SFX] Comer\n";
                     playSFX("assets/efectos/Comer.mp3", 100);
                     break;
                 default:
@@ -66,6 +61,5 @@ void* sfxThreadFunction(void* arg) {
         usleep(1000);
     }
     
-    std::cout << "[SFX THREAD] Terminado\n";
     return nullptr;
 }
