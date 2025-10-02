@@ -4,6 +4,7 @@
 #include "../core/Food.hpp"
 #include "../core/Snake.hpp"
 #include "../core/ThreadSharedData.hpp"
+#include "SFXThread.hpp"
 
 struct FoodThreadData {
     Food* food;
@@ -11,6 +12,7 @@ struct FoodThreadData {
     Snake* snake2;
     SharedGameData* sharedData;
     bool* running;
+    SFXData* sfxData;
 };
 
 void* foodThreadFunction(void* arg);

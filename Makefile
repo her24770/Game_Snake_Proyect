@@ -24,11 +24,8 @@ SOURCES = $(SRC_DIR)/main.cpp \
           $(SRC_DIR)/threads/RenderThread.cpp \
           $(SRC_DIR)/threads/FoodThread.cpp \
           $(SRC_DIR)/threads/CollisionThread.cpp \
-		  $(SRC_DIR)/threads/AudioThread.cpp \
-          $(SRC_DIR)/rendering/Game.cpp	  
-		  
-#Flags audio
-CXXFLAGS = -std=c++17 -Wall -Wextra -O2 -pthread -Wno-unused-result
+          $(SRC_DIR)/threads/SFXThread.cpp \
+          $(SRC_DIR)/rendering/Game.cpp
 
 # Archivos objeto
 OBJECTS = $(SOURCES:$(SRC_DIR)/%.cpp=$(OBJ_DIR)/%.o)
@@ -66,18 +63,25 @@ run: $(EXECUTABLE)
 install-deps:
 	@echo "📦 Instalando dependencias para Ubuntu/WSL..."
 	sudo apt update
-	sudo apt install -y build-essential g++ make
+	sudo apt install -y build-essential g++ make mpg123
 
-# Verificar compilador
+# Verificar compilador y herramientas de audio
 check:
 	@echo "🔍 Verificando herramientas de compilación..."
 	@which g++ > /dev/null && echo "✅ g++ encontrado: $$(g++ --version | head -n1)" || echo "❌ g++ no encontrado"
 	@which make > /dev/null && echo "✅ make encontrado: $$(make --version | head -n1)" || echo "❌ make no encontrado"
+	@which mpg123 > /dev/null && echo "✅ mpg123 encontrado: $$(mpg123 --version 2>&1 | head -n1)" || echo "❌ mpg123 no encontrado (necesario para audio)"
 
 # Compilación con información de debug
 debug: CXXFLAGS += -g -DDEBUG
 debug: $(EXECUTABLE)
 	@echo "🐛 Compilación en modo debug completada!"
+
+# Verificar estructura de audio
+check-audio:
+	@echo "🔊 Verificando estructura de audio..."
+	@test -d assets/audio && echo "✅ Directorio assets/audio/ existe" || echo "❌ Crear directorio: mkdir -p assets/audio"
+	@test -f assets/audio/collision.mp3 && echo "✅ collision.mp3 encontrado" || echo "⚠️  collision.mp3 no encontrado"
 
 # Mostrar ayuda
 help:
@@ -87,8 +91,9 @@ help:
 	@echo "  make run          - Compilar y ejecutar"
 	@echo "  make debug        - Compilar en modo debug"
 	@echo "  make check        - Verificar herramientas"
+	@echo "  make check-audio  - Verificar archivos de audio"
 	@echo "  make install-deps - Instalar dependencias (Ubuntu/WSL)"
 	@echo "  make help         - Mostrar esta ayuda"
 
 # Objetivos que no son archivos
-.PHONY: all clean run debug check install-deps help
+.PHONY: all clean run debug check check-audio install-deps help

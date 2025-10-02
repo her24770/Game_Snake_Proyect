@@ -9,12 +9,11 @@
 #include "../include/core/Food.hpp"
 #include "../include/threads/FoodThread.hpp"
 #include "../include/threads/CollisionThread.hpp"
-#include "../include/threads/AudioThread.hpp"
+#include "../include/threads/SFXThread.hpp"
 #include <iostream>
 #include <pthread.h>
 #include <unistd.h>
-#include <queue>
-#include <mutex>
+
 
 int main() {
     system("stty -icanon -echo");
@@ -23,6 +22,12 @@ int main() {
     pthread_t inputThread;
     pthread_create(&inputThread, nullptr, inputThreadFunction, &sharedData);
     
+    SFXData sfxData;
+    sfxData.running.store(true);
+    
+    pthread_t sfxThread;
+    pthread_create(&sfxThread, nullptr, sfxThreadFunction, &sfxData);
+
     int selectedOption = 0;
     int screen = 0;
 
@@ -34,21 +39,6 @@ int main() {
         int playerId;
         bool* runningMovement;
     };
-    
-    std::queue<std::string> soundQueue;
-    std::mutex audioMutex;
-    std::condition_variable audioCondition;
-    bool runningAudio = true;
-    
-    AudioThreadData audioData = {
-        &runningAudio,
-        &soundQueue,
-        &audioMutex,
-        &audioCondition
-    };
-    
-    pthread_t audioThread;
-    pthread_create(&audioThread, nullptr, audioThreadFunction, &audioData);
     
     // Dibujar menú inicial
     system("clear");
@@ -89,7 +79,7 @@ int main() {
                     Snake snake1(10,8);
                     Snake snake2(10,16);
                     Food food;
-                    //Se almacenan los parametros par alos hilos de movimiento 
+                    //Se almacenan los parametros para los hilos de movimiento 
                     ThreadData snake1Data = { &snake1, &sharedData, 1 };
                     ThreadData snake2Data = { &snake2, &sharedData, 2 };
                     bool runningMovement = true;
@@ -101,8 +91,16 @@ int main() {
                     snake1Data.runningMovement = &runningMovement;
                     snake2Data.runningMovement = &runningMovement;
                     //Se crean hilos para el movimiento de las serpientes y reescritura del escenario
-                    FoodThreadData foodData = { &food, &snake1, &snake2, &sharedData, &runningMovement };
-                    CollisionThreadData collisionData = { &snake1, &snake2, &sharedData, &runningMovement, &gameOver, &audioData };
+                    FoodThreadData foodData = { &food, &snake1, &snake2, &sharedData, &runningMovement, &sfxData };
+                    
+                    CollisionThreadData collisionData = { 
+                        &snake1, 
+                        &snake2, 
+                        &sharedData, 
+                        &runningMovement, 
+                        &gameOver, 
+                        &sfxData
+                    };
 
                     pthread_t renderThread, snake1Thread, snake2Thread, foodThread, collisionThread;
 
@@ -164,7 +162,11 @@ int main() {
     }
     
     sharedData.stop();
+    sfxData.running.store(false);
+    
     pthread_join(inputThread, nullptr);
+    pthread_join(sfxThread, nullptr);
+    
     system("stty icanon echo");
     
     return 0;
