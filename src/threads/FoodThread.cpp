@@ -1,4 +1,5 @@
 #include "../../include/threads/FoodThread.hpp"
+#include "../../include/threads/SFXThread.hpp"
 #include <unistd.h>
 #include <mutex>
 
@@ -28,6 +29,9 @@ void* foodThreadFunction(void* arg) {
                     data->snake1->sumarPuntos(10);
                     data->food->consume();
                     needsRegenerate = true;
+                    if(data->sfxData) {
+                        playSoundEffect(data->sfxData, SFX_EAT_FOOD);
+                    }
                 }
 
                 if (data->snake2) {
@@ -37,6 +41,9 @@ void* foodThreadFunction(void* arg) {
                         data->snake2->sumarPuntos(10);
                         data->food->consume();
                         needsRegenerate = true;
+                        if(data->sfxData) {
+                            playSoundEffect(data->sfxData, SFX_EAT_FOOD);
+                        }
                     }
                 }
             } else {

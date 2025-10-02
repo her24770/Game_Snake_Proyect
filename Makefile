@@ -29,6 +29,7 @@ SOURCES = $(SRC_DIR)/main.cpp \
           $(SRC_DIR)/threads/FoodThread.cpp \
           $(SRC_DIR)/threads/CollisionThread.cpp \
 		  $(SRC_DIR)/threads/AudioThread.cpp \
+		  $(SRC_DIR)/threads/SFXThread.cpp \
           $(SRC_DIR)/rendering/Game.cpp	  
 
 # Archivos objeto
@@ -80,6 +81,12 @@ debug: CXXFLAGS += -g -DDEBUG
 debug: $(EXECUTABLE)
 	@echo "🐛 Compilación en modo debug completada!"
 
+# Verificar estructura de audio
+check-audio:
+	@echo "🔊 Verificando estructura de audio..."
+	@test -d assets/audio && echo "✅ Directorio assets/audio/ existe" || echo "❌ Crear directorio: mkdir -p assets/audio"
+	@test -f assets/audio/collision.mp3 && echo "✅ collision.mp3 encontrado" || echo "⚠️  collision.mp3 no encontrado"
+	
 # Mostrar ayuda
 help:
 	@echo "🎯 Comandos disponibles:"

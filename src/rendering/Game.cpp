@@ -24,6 +24,7 @@ namespace GAME {
         // Dibujar serpientes
         auto drawSnakeOnScreen = [&](const Snake& snake, const std::string& cabezaSym, const std::string& cuerpoSym){
             const auto& cuerpo = snake.getCuerpo();
+            auto cabeza = snake.getCabeza();
             for(size_t i=0; i<cuerpo.size(); ++i){
                 int x = cuerpo[i].first;
                 int y = cuerpo[i].second;
@@ -86,19 +87,19 @@ void GAME::renderGameOver(const Snake& snake1, const Snake* snake2) {
 
     // Mensaje GAME OVER centrado
     std::vector<std::string> gameOverText = {
-        " ██████╗  █████╗ ███╗   ███╗███████╗",
-        "██╔════╝ ██╔══██╗████╗ ████║██╔════╝",
-        "██║  ███╗███████║██╔████╔██║█████╗  ",
-        "██║   ██║██╔══██║██║╚██╔╝██║██╔══╝  ",
-        "╚██████╔╝██║  ██║██║ ╚═╝ ██║███████╗",
-        " ╚═════╝ ╚═╝  ╚═╝╚═╝     ╚═╝╚══════╝",
+        "   @@@@@@     @@      @@     @@ @@@@@@@@",
+        "  @@         @@@@@    @@ @@@ @@ @@      ",
+        " @@         @@   @@   @@  @  @@ @@@@@@@ ",
+        " @@   @@@@  @@@@@@@   @@     @@ @@      ",
+        "  @@    @@ @@     @@  @@     @@ @@      ",
+        "   @@@@@@  @@     @@  @@     @@ @@@@@@@@",
         "",
-        " ██████╗ ██╗   ██╗███████╗██████╗ ",
-        "██╔═══██╗██║   ██║██╔════╝██╔══██╗",
-        "██║   ██║██║   ██║█████╗  ██████╔╝",
-        "██║   ██║╚██╗ ██╔╝██╔══╝  ██╔══██╗",
-        "╚██████╔╝ ╚████╔╝ ███████╗██║  ██║",
-        " ╚═════╝   ╚═══╝  ╚══════╝╚═╝  ╚═╝"
+        "   @@@@@@   @@   @@  @@@@@@@@  @@@@@@  ",
+        "  @@    @@  @@   @@  @@        @@   @@ ",
+        " @@      @@  @@ @@   @@@@@@@@  @@@@@@  ",
+        " @@      @@  @@ @@   @@        @@   @@ ",
+        "  @@    @@    @@@    @@        @@   @@ ",
+        "   @@@@@@     @@@    @@@@@@@@  @@   @@ "
     };
 
     int startY = (CONSOLE_HEIGHT - gameOverText.size()) / 2;

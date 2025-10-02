@@ -15,12 +15,13 @@ void stopCurrentAudio() {
     }
 }
 
-void playAudio(const char* filename) {
+void playAudio(const char* filename, int volume = 30) {
     stopCurrentAudio();
     
     currentMpg123Pid = fork();
     
     if(currentMpg123Pid == 0) {
+        std::string volStr = std::to_string(volume);
         // Proceso hijo: ejecutar mpg123
         execl("/usr/bin/mpg123", "mpg123", "-q", "--loop", "-1", filename, (char*)nullptr);
         _exit(1); // Si execl falla
@@ -43,16 +44,16 @@ void* audioThreadFunction(void* arg) {
             
             switch(currentTrack) {
                 case AUDIO_MENU:
-                    playAudio("assets/audio/menu.mp3");
+                    playAudio("assets/audio/menu.mp3", 25);
                     break;
                 case AUDIO_GAME:
-                    playAudio("assets/audio/juego.mp3");
+                    playAudio("assets/audio/juego.mp3", 20);
                     break;
                 case AUDIO_INSTRUCTIONS:
-                    playAudio("assets/audio/instrucciones.mp3");
+                    playAudio("assets/audio/instrucciones.mp3", 30);
                     break;
                 case AUDIO_SCOREBOARD:
-                    playAudio("assets/audio/puntajes.mp3");
+                    playAudio("assets/audio/puntajes.mp3", 30);
                     break;
                 case AUDIO_NONE:
                     stopCurrentAudio();
