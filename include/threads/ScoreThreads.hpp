@@ -1,9 +1,9 @@
-#ifndef SCORE_THREAD_HPP
-#define SCORE_THREAD_HPP
+#ifndef SCORE_THREADS_HPP
+#define SCORE_THREADS_HPP
 
 #include <string>
 
-struct ScoreThreadData {
+struct ScoreThreadsData {
     std::string nombre;
     int puntuacion;
     std::string tiempo;

@@ -1,6 +1,7 @@
 #ifndef ASCII_ART_HPP
 #define ASCII_ART_HPP
 
+#include "../threads/ScoreThread.hpp"
 #include <string>
 #include <vector>
 
@@ -37,7 +38,7 @@ namespace ASCIIArt {
 
 
     void drawInstructions();
-    void drawScoreboard();
+    void drawScoreboard(ScoreThreadData* scoreData = nullptr);
 }
 
 #endif // ASCII_ART_HPP

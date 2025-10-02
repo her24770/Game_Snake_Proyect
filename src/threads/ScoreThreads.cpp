@@ -18,7 +18,7 @@ bool compareScores(const ScoreEntry& a, const ScoreEntry& b) {
 }
 
 void* writeScoreThread(void* arg) {
-    ScoreThreadData* data = (ScoreThreadData*)arg;
+    ScoreThreadsData* data = (ScoreThreadsData*)arg;
 
     std::vector<ScoreEntry> scores;
 

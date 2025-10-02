@@ -12,6 +12,7 @@
 #include "../include/threads/CollisionThread.hpp"
 #include "../include/threads/AudioThread.hpp"
 #include "../include/threads/SFXThread.hpp"
+#include "../include/threads/ScoreThread.hpp"
 #include "../include/threads/ScoreThreads.hpp"
 #include <iostream>
 #include <pthread.h>
@@ -47,6 +48,14 @@ int main() {
 
     pthread_t timerThread;
     pthread_create(&timerThread, nullptr, timerThreadFunction, &timerData);
+
+    //Puntajes
+    ScoreThreadData scoreData;
+    scoreData.running.store(true);
+    scoreData.needsUpdate.store(false);
+
+    pthread_t scoreThread;
+    pthread_create(&scoreThread, nullptr, scoreThreadFunction, &scoreData);
     
     const int MENU_OPCIONES = 6;
     const int SPEED_OPTION = 4; 
@@ -179,7 +188,8 @@ int main() {
                         timerData.counting.store(false);
                         int finalTime = timerData.totalSeconds.load();
                         GAME::renderGameOver(snake1, snake1, finalTime);
-                        if(snake1.getPuntuacion() > 20){
+                        int lowestTop = getLowestTopScore(&scoreData);
+                        if(snake1.getPuntuacion() > lowestTop){
                             std::string nombre;
                             std::cout << "Nueva puntuacion alta, ingrese el nombre: ";
                             std::cin >> nombre;
@@ -192,7 +202,7 @@ int main() {
                             snprintf(tiempoStr, sizeof(tiempoStr), "%02d:%02d", minutos, segundos);
 
                             // Crear datos para el hilo
-                            ScoreThreadData* scoreData = new ScoreThreadData{nombre, snake1.getPuntuacion(), tiempoStr, "assets/scores.csv"};
+                            ScoreThreadsData* scoreData = new ScoreThreadsData{nombre, snake1.getPuntuacion(), tiempoStr, "assets/scores.csv"};
 
                             pthread_t scoreThread;
                             pthread_create(&scoreThread, nullptr, writeScoreThread, scoreData);
@@ -261,7 +271,8 @@ int main() {
                         timerData.counting.store(false);
                         int finalTime = timerData.totalSeconds.load();
                         GAME::renderGameOver(snake1, snake2, finalTime);
-                        if(snake1.getPuntuacion() > 20){
+                        int lowestTop = getLowestTopScore(&scoreData);
+                        if(snake1.getPuntuacion() > lowestTop){
                             std::string nombre;
                             std::cout << "Nueva puntuacion alta para el jugador 1, ingrese el nombre: ";
                             std::cin >> nombre;
@@ -274,13 +285,13 @@ int main() {
                             snprintf(tiempoStr, sizeof(tiempoStr), "%02d:%02d", minutos, segundos);
 
                             // Crear datos para el hilo
-                            ScoreThreadData* scoreData = new ScoreThreadData{nombre, snake1.getPuntuacion(), tiempoStr, "assets/scores.csv"};
+                            ScoreThreadsData* scoreData = new ScoreThreadsData{nombre, snake1.getPuntuacion(), tiempoStr, "assets/scores.csv"};
 
                             pthread_t scoreThread;
                             pthread_create(&scoreThread, nullptr, writeScoreThread, scoreData);
                             pthread_detach(scoreThread); // No bloquea el main
                         }
-                        if(snake2.getPuntuacion() > 20){
+                        if(snake2.getPuntuacion() > lowestTop){
                             std::string nombre;
                             std::cout << "Nueva puntuacion alta para el jugador 2, ingrese el nombre: ";
                             std::cin >> nombre;
@@ -293,7 +304,7 @@ int main() {
                             snprintf(tiempoStr, sizeof(tiempoStr), "%02d:%02d", minutos, segundos);
 
                             // Crear datos para el hilo
-                            ScoreThreadData* scoreData = new ScoreThreadData{nombre, snake2.getPuntuacion(), tiempoStr, "assets/scores.csv"};
+                            ScoreThreadsData* scoreData = new ScoreThreadsData{nombre, snake2.getPuntuacion(), tiempoStr, "assets/scores.csv"};
 
                             pthread_t scoreThread;
                             pthread_create(&scoreThread, nullptr, writeScoreThread, scoreData);
@@ -306,7 +317,7 @@ int main() {
                 else if (screen == 3) {
                     ASCIIArt::drawInstructions();
                 } else if (screen == 4) {
-                    ASCIIArt::drawScoreboard();
+                    ASCIIArt::drawScoreboard(&scoreData);
                 }
             }
             else {
@@ -324,6 +335,7 @@ int main() {
     audioData.running.store(false);
     sfxData.running.store(false);
     timerData.running.store(false);
+    scoreData.running.store(false);
 
 
 
@@ -331,6 +343,7 @@ int main() {
     pthread_join(audioThread, nullptr);
     pthread_join(sfxThread, nullptr);
     pthread_join(timerThread, nullptr);
+    pthread_join(scoreThread, nullptr);
 
 
     system("stty icanon echo");
