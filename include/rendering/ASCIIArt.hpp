@@ -35,9 +35,9 @@ namespace ASCIIArt {
     void printCenteredLine(const std::string& text);
     void printColoredCenteredLine(const std::string& text, const std::string& color);
 
-
+    void drawGameTitle();
     void drawInstructions();
     void drawScoreboard();
 }
 
-#endif // ASCII_ART_HPP
+#endif

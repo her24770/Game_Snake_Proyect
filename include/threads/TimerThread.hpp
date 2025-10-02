@@ -6,8 +6,7 @@
 #include <mutex>
 #include <atomic>
 #include <string>
-#include "../../include/threads/TimerThread.hpp"
-
+#include "../core/ThreadSharedData.hpp"
 
 struct TimerThreadData {
     std::atomic<bool> running;

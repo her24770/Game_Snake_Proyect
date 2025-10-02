@@ -254,11 +254,12 @@ void drawScoreboard() {
 
 // Funciones auxiliares
 void printCenteredLine(const std::string& text) {
-    const int CONSOLE_WIDTH = 80;
-    int padding = (CONSOLE_WIDTH - text.length()) / 2;
-    std::cout << std::string(padding, ' ') << text << std::endl;
-}
-
+        int padding = (CONSOLE_WIDTH - text.length()) / 2;
+        if (padding > 0) {
+            std::cout << std::string(padding, ' ');
+        }
+        std::cout << text << std::endl;
+    }
 std::string padString(const std::string& text, size_t width) {
     if (text.length() >= width) return text.substr(0, width);
     size_t padding = width - text.length();
@@ -271,5 +272,56 @@ void drawMenuBorder() {
     printCenteredLine(border);
     std::cout << WindowsConsole::Colors::RESET;
 }
+
+
+    void drawGameTitle() {
+        std::cout << WindowsConsole::Colors::BRIGHT_GREEN;
+        
+        // Arte ASCII para "SNAKE GAME"
+        std::vector<std::string> title = {
+            "               ",
+            "               ",
+            "                    ███████╗███╗   ██╗ █████╗ ██╗  ██╗███████╗",
+            "                    ██╔════╝████╗  ██║██╔══██╗██║ ██╔╝██╔════╝",
+            "                    ███████╗██╔██╗ ██║███████║█████╔╝ █████╗  ",
+            "                    ╚════██║██║╚██╗██║██╔══██║██╔═██╗ ██╔══╝  ",
+            "                    ███████║██║ ╚████║██║  ██║██║  ██╗███████╗",
+            "                    ╚══════╝╚═╝  ╚═══╝╚═╝  ╚═╝╚═╝  ╚═╝╚══════╝",
+            "",
+            "                       ██████╗  █████╗ ███╗   ███╗███████╗",
+            "                      ██╔════╝ ██╔══██╗████╗ ████║██╔════╝",
+            "                      ██║  ███╗███████║██╔████╔██║█████╗  ",
+            "                      ██║   ██║██╔══██║██║╚██╔╝██║██╔══╝  ",
+            "                      ╚██████╔╝██║  ██║██║ ╚═╝ ██║███████╗",
+            "                       ╚═════╝ ╚═╝  ╚═╝╚═╝     ╚═╝╚══════╝"
+        };
+        
+        for (const auto& line : title) {
+            ASCIIArt::printCenteredLine(line);
+        }
+        
+        std::cout << WindowsConsole::Colors::RESET << std::endl;
+    }
+    void drawInstructionsTitle(){
+        std::cout << WindowsConsole::Colors::BRIGHT_GREEN;
+        
+        // Arte ASCII para titulo Instrucciones
+        std::vector<std::string> title = {
+            "               ",
+            "               ",
+            "▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄",
+            "█▄ ▄██ ▀██ ██ ▄▄▄ █▄▄ ▄▄██ ▄▄▀██ ██ ██ ▄▄▀██ ▄▄▀█▄ ▄██ ▄▄▄ ██ ▀██ ██ ▄▄▄██ ▄▄▄ █",
+            "██ ███ █ █ ██▄▄▄▀▀███ ████ ▀▀▄██ ██ ██ █████ █████ ███ ███ ██ █ █ ██ ▄▄▄██▄▄▄▀▀█",
+            "█▀ ▀██ ██▄ ██ ▀▀▀ ███ ████ ██ ██▄▀▀▄██ ▀▀▄██ ▀▀▄█▀ ▀██ ▀▀▀ ██ ██▄ ██ ▀▀▀██ ▀▀▀ █",
+            "▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀"
+
+        };
+        
+        for (const auto& line : title) {
+            printCenteredLine(line);
+        }
+        
+        std::cout << WindowsConsole::Colors::RESET << std::endl;
+    }
 
 } 
