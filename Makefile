@@ -15,13 +15,17 @@ INCLUDE_DIR = include
 SOURCES = $(SRC_DIR)/main.cpp \
           $(SRC_DIR)/utils/WindowsConsole.cpp \
           $(SRC_DIR)/utils/InputHandler.cpp \
+          $(SRC_DIR)/utils/CSVManager.cpp \
           $(SRC_DIR)/rendering/ASCIIArt.cpp \
+          $(SRC_DIR)/rendering/PodiumAnimation.cpp \
+          $(SRC_DIR)/rendering/GameDialog.cpp \
           $(SRC_DIR)/core/ThreadSharedData.cpp \
           $(SRC_DIR)/core/Snake.cpp \
           $(SRC_DIR)/core/Food.cpp \
           $(SRC_DIR)/threads/InputThread.cpp \
           $(SRC_DIR)/threads/MovementThread.cpp \
           $(SRC_DIR)/threads/RenderThread.cpp \
+          $(SRC_DIR)/threads/TimerThread.cpp \
           $(SRC_DIR)/threads/FoodThread.cpp \
           $(SRC_DIR)/threads/CollisionThread.cpp \
 		  $(SRC_DIR)/threads/AudioThread.cpp \

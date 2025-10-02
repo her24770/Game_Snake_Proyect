@@ -2,6 +2,7 @@
 #include "../../include/utils/InputHandler.hpp"
 #include <unistd.h>
 #include <string.h>
+#include <cstdio>
 
 void* inputThreadFunction(void* arg) {
     SharedGameData* data = (SharedGameData*)arg;

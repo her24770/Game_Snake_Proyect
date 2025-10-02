@@ -1,9 +1,12 @@
 #include "../../include/rendering/Game.hpp"
+#include "../../include/rendering/GameDialog.hpp"
+#include "../../include/utils/CSVManager.hpp"
 #include "../../include/utils/WindowsConsole.hpp"
 #include "../../include/utils/InputHandler.hpp"
 #include "../../include/core/Food.hpp"
 #include <iostream>
 #include <iomanip>
+#include <string>
 
 namespace GAME {
     //Crea toda la vista incluyendo las serpientes, bordes y la comida
@@ -21,7 +24,6 @@ namespace GAME {
         // Dibujar serpientes
         auto drawSnakeOnScreen = [&](const Snake& snake, const std::string& cabezaSym, const std::string& cuerpoSym){
             const auto& cuerpo = snake.getCuerpo();
-            auto cabeza = snake.getCabeza();
             for(size_t i=0; i<cuerpo.size(); ++i){
                 int x = cuerpo[i].first;
                 int y = cuerpo[i].second;
@@ -129,4 +131,17 @@ void GAME::renderGameOver(const Snake& snake1, const Snake* snake2) {
         std::cout << "Puntaje Final Jugador 2: " << snake2->getPuntuacion() << std::endl;
         }
     std::cout << WindowsConsole::Colors::RESET << std::endl;
+}
+
+bool GAME::showSaveDialog() {
+    return GameDialog::showSaveDialog();
+}
+
+std::string GAME::getPlayerName() {
+    return GameDialog::getPlayerName();
+}
+
+void GAME::savePlayerScore(const std::string& playerName, int score, int timeMs) {
+    CSVManager::saveScoreToCSV("scores.csv", playerName, score, timeMs / 1000); // Convertir a segundos
+    GameDialog::showSaveConfirmation();
 }

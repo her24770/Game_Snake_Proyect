@@ -6,6 +6,7 @@
 #include "../include/threads/InputThread.hpp"
 #include "../include/threads/MovementThread.hpp"
 #include "../include/threads/RenderThread.hpp"
+#include "../include/threads/TimerThread.hpp"
 #include "../include/core/Food.hpp"
 #include "../include/threads/FoodThread.hpp"
 #include "../include/threads/CollisionThread.hpp"
@@ -127,12 +128,19 @@ int main() {
                     FoodThreadData foodData = { &food, &snake1, nullptr, &sharedData, &runningMovement };
                     CollisionThreadData collisionData = { &snake1, nullptr, &sharedData, &runningMovement, &gameOver };
 
-                    pthread_t renderThread, snake1Thread, foodThread, collisionThread;
+                    // Agregar timer para el modo de 1 jugador
+                    TimerThreadData timerData;
+                    timerData.running.store(true);
+                    timerData.sharedData = &sharedData;
+                    timerData.reset();
+
+                    pthread_t renderThread, snake1Thread, foodThread, collisionThread, timerThread;
 
                     pthread_create(&snake1Thread, nullptr, snakeMovementThread, &snake1Data);
                     pthread_create(&foodThread, nullptr, foodThreadFunction, &foodData);
                     pthread_create(&collisionThread, nullptr, collisionThreadFunction, &collisionData);
                     pthread_create(&renderThread, nullptr, renderThreadFunction, &renderData);
+                    pthread_create(&timerThread, nullptr, timerThreadFunction, &timerData);
 
                     bool escPressed = false;
                     while(screen == 1 && !gameOver) {
@@ -148,15 +156,26 @@ int main() {
                     if(escPressed) screen = 0;
                     runningMovement = false;
                     runningRender = false;
+                    timerData.running.store(false);
 
                     pthread_join(snake1Thread, nullptr);
                     pthread_join(foodThread, nullptr);
                     pthread_join(collisionThread, nullptr);
                     pthread_join(renderThread, nullptr);
+                    pthread_join(timerThread, nullptr);
 
                     if(gameOver) {
                         GAME::renderGameOver(snake1, nullptr);
-                        sleep(5);
+                        
+                        // Mostrar diálogo de guardado solo en modo de 1 jugador
+                        if(GAME::showSaveDialog()) {
+                            std::string playerName = GAME::getPlayerName();
+                            int finalTime = timerData.elapsedMilliseconds.load();
+                            GAME::savePlayerScore(playerName, snake1.getPuntuacion(), finalTime);
+                            sleep(2); // Mostrar confirmación
+                        }
+                        
+                        sleep(3);
                         screen = 0;
                     }
                 }
