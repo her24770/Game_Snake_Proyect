@@ -10,6 +10,7 @@
 #include "../include/threads/FoodThread.hpp"
 #include "../include/threads/CollisionThread.hpp"
 #include "../include/threads/AudioThread.hpp"
+#include "../include/threads/SFXThread.hpp"
 #include <iostream>
 #include <pthread.h>
 #include <unistd.h>
@@ -20,6 +21,13 @@ int main() {
     SharedGameData sharedData;
     pthread_t inputThread;
     pthread_create(&inputThread, nullptr, inputThreadFunction, &sharedData);
+    //Efectos de sonido
+    SFXData sfxData;
+    sfxData.running.store(true);
+    
+    pthread_t sfxThread;
+    pthread_create(&sfxThread, nullptr, sfxThreadFunction, &sfxData);
+
     //Audio
     AudioThreadData audioData;
     audioData.currentTrack.store(AUDIO_MENU);
@@ -124,8 +132,8 @@ int main() {
                     
                     snake1Data.runningMovement = &runningMovement;
 
-                    FoodThreadData foodData = { &food, &snake1, nullptr, &sharedData, &runningMovement };
-                    CollisionThreadData collisionData = { &snake1, nullptr, &sharedData, &runningMovement, &gameOver };
+                    FoodThreadData foodData = { &food, &snake1, nullptr, &sharedData, &runningMovement, &sfxData};
+                    CollisionThreadData collisionData = { &snake1, nullptr, &sharedData, &runningMovement, &gameOver, &sfxData};
 
                     pthread_t renderThread, snake1Thread, foodThread, collisionThread;
 
@@ -237,9 +245,11 @@ int main() {
     
     sharedData.stop();
     audioData.running.store(false);
+    sfxData.running.store(false);
 
     pthread_join(inputThread, nullptr);
     pthread_join(audioThread, nullptr);
+    pthread_join(sfxThread, nullptr);
 
     system("stty icanon echo");
     
