@@ -8,6 +8,7 @@
 #include "../include/threads/RenderThread.hpp"
 #include "../include/core/Food.hpp"
 #include "../include/threads/FoodThread.hpp"
+#include "../include/threads/TimerThread.hpp"
 #include "../include/threads/CollisionThread.hpp"
 #include "../include/threads/AudioThread.hpp"
 #include "../include/threads/SFXThread.hpp"
@@ -36,6 +37,15 @@ int main() {
 
     pthread_t audioThread;
     pthread_create(&audioThread, nullptr, audioThreadFunction, &audioData);
+
+    //temporizador
+    TimerThreadData timerData;
+    timerData.running.store(true);
+    timerData.counting.store(false);
+    timerData.totalSeconds.store(0);
+
+    pthread_t timerThread;
+    pthread_create(&timerThread, nullptr, timerThreadFunction, &timerData);
     
     const int MENU_OPCIONES = 6;
     const int SPEED_OPTION = 4; 
@@ -76,11 +86,10 @@ int main() {
         int key = (key1 != InputHandler::KEY_NONE) ? key1 : key2; // Prioriza key1 si existe
         // Cambiar audio según pantalla
         if(screen != lastScreen) {
-            switch(screen) {
-                case 0: audioData.currentTrack.store(AUDIO_MENU); break;
-                case 1: audioData.currentTrack.store(AUDIO_GAME); break;
-                case 2: audioData.currentTrack.store(AUDIO_INSTRUCTIONS); break;
-                case 3: audioData.currentTrack.store(AUDIO_SCOREBOARD); break;
+            if(screen == 1) {
+                audioData.currentTrack.store(AUDIO_GAME);
+            } else {
+                audioData.currentTrack.store(AUDIO_MENU);
             }
             audioData.shouldChange.store(true);
             lastScreen = screen;
@@ -121,6 +130,9 @@ int main() {
                     sharedData.getKey();
                     sharedData.getKey2();
                     Snake snake1(10,8);
+                    // Iniciar cronómetro
+                    timerData.totalSeconds.store(0);
+                    timerData.counting.store(true);
                     Food food;
 
                     ThreadData snake1Data = { &snake1, &sharedData, 1, nullptr, velocidad };
@@ -163,7 +175,9 @@ int main() {
                     pthread_join(renderThread, nullptr);
 
                     if(gameOver) {
-                        GAME::renderGameOver(snake1, nullptr);
+                        timerData.counting.store(false);
+                        int finalTime = timerData.totalSeconds.load();
+                        GAME::renderGameOver(snake1, snake1, finalTime);
                         sleep(5);
                         screen = 0;
                     }
@@ -173,6 +187,9 @@ int main() {
                     sharedData.getKey2();
                     Snake snake1(10,8);
                     Snake snake2(10,16);
+                    // Iniciar cronómetro
+                    timerData.totalSeconds.store(0);
+                    timerData.counting.store(true);
                     Food food;
 
                     ThreadData snake1Data = { &snake1, &sharedData, 1, nullptr, velocidad };
@@ -221,7 +238,9 @@ int main() {
                     pthread_join(renderThread, nullptr);
 
                     if(gameOver) {
-                        GAME::renderGameOver(snake1, &snake2);
+                        timerData.counting.store(false);
+                        int finalTime = timerData.totalSeconds.load();
+                        GAME::renderGameOver(snake1, snake2, finalTime);
                         sleep(5);
                         screen = 0;
                     }
@@ -246,10 +265,15 @@ int main() {
     sharedData.stop();
     audioData.running.store(false);
     sfxData.running.store(false);
+    timerData.running.store(false);
+
+
 
     pthread_join(inputThread, nullptr);
     pthread_join(audioThread, nullptr);
     pthread_join(sfxThread, nullptr);
+    pthread_join(timerThread, nullptr);
+
 
     system("stty icanon echo");
     
