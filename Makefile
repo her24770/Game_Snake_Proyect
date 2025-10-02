@@ -27,7 +27,8 @@ SOURCES = $(SRC_DIR)/main.cpp \
 		  $(SRC_DIR)/threads/AudioThread.cpp \
 		  $(SRC_DIR)/threads/SFXThread.cpp \
 		  $(SRC_DIR)/threads/TimerThread.cpp \
-          $(SRC_DIR)/rendering/Game.cpp	  
+          $(SRC_DIR)/rendering/Game.cpp \
+		  $(SRC_DIR)/threads/ScoreThreads.cpp  
 
 # Archivos objeto
 OBJECTS = $(SOURCES:$(SRC_DIR)/%.cpp=$(OBJ_DIR)/%.o)
