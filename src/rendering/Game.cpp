@@ -6,6 +6,17 @@
 #include <iomanip>
 
 namespace GAME {
+
+     std::string formatTime(int totalSeconds) {
+        int minutes = totalSeconds / 60;
+        int seconds = totalSeconds % 60;
+        
+        std::ostringstream oss;
+        oss << std::setfill('0') << std::setw(2) << minutes 
+            << ":" << std::setw(2) << seconds;
+        return oss.str();
+    }
+    
     //Crea toda la vista incluyendo las serpientes, bordes y la comida
     void renderGameScreen(const Snake& snake1, const Food& food, const Snake* snake2) {
         std::vector<std::vector<std::string>> pantalla(CONSOLE_HEIGHT, std::vector<std::string>(CONSOLE_WIDTH, " "));
@@ -71,7 +82,7 @@ namespace GAME {
 
 
 
-void GAME::renderGameOver(const Snake& snake1, const Snake* snake2) {
+void GAME::renderGameOver(const Snake& snake1, const Snake& snake2, int totalSeconds) {
     using namespace GAME;
     std::vector<std::vector<std::string>> pantalla(GAME::CONSOLE_HEIGHT, std::vector<std::string>(GAME::CONSOLE_WIDTH, " "));
     // Dibujar bordes
@@ -123,10 +134,10 @@ void GAME::renderGameOver(const Snake& snake1, const Snake* snake2) {
         std::cout << std::endl;
     }
 
-    std::cout << WindowsConsole::Colors::BRIGHT_WHITE << std::endl;
-        std::cout << "\nPuntaje Final Jugador 1: " << snake1.getPuntuacion() << std::endl;
-        if (snake2) {
-        std::cout << "Puntaje Final Jugador 2: " << snake2->getPuntuacion() << std::endl;
-        }
+    std::cout << WindowsConsole::Colors::BRIGHT_WHITE
+          << "\nPuntaje Final Jugador 1: " << snake1.getPuntuacion()
+          << "\nPuntaje Final Jugador 2: " << snake2.getPuntuacion()
+          << "\nTiempo de Juego: " << formatTime(totalSeconds)
+          << WindowsConsole::Colors::RESET << std::endl;
     std::cout << WindowsConsole::Colors::RESET << std::endl;
 }
